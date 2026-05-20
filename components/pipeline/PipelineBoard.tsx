@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn, asRoute } from "@/lib/utils";
 import type { Lead, LeadStatus } from "@/types";
 
 const SOURCE_OPTIONS = [
@@ -535,7 +535,7 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
                 status={s}
                 leads={grouped[s.key] ?? []}
                 isActiveOver={overId === s.key}
-                onLeadClick={(id) => router.push(`/leads/${id}`)}
+                onLeadClick={(id) => router.push(asRoute(`/leads/${id}`))}
               />
             ))}
           </div>

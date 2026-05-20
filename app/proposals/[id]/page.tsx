@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/AppShell";
 import { createServerClient } from "@/lib/supabase-client";
+import { asRoute } from "@/lib/utils";
 
 type ProposalPageProps = {
   params: Promise<{ id: string }>;
@@ -104,7 +105,7 @@ export default async function ProposalDetailPage({ params }: ProposalPageProps) 
               <div className="rounded-3xl border border-slate-200/80 bg-white p-5">
                 <p className="text-sm text-slate-500">Link compartilhável</p>
                 <Link
-                  href={`/public/proposal/${proposal.token}`}
+                  href={asRoute(`/public/proposal/${proposal.token}`)}
                   className="mt-2 block break-all text-sm font-medium text-brand-600 hover:text-brand-500"
                 >
                   /public/proposal/{proposal.token}
@@ -115,7 +116,7 @@ export default async function ProposalDetailPage({ params }: ProposalPageProps) 
 
           <div className="flex items-center gap-4">
             <Link
-              href={`/proposals/${id}/edit`}
+              href={asRoute(`/proposals/${id}/edit`)}
               className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
             >
               Editar proposta

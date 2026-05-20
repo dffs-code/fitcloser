@@ -16,7 +16,7 @@ const navItems = [
   { label: "Follow-ups", href: "/followups" },
   { label: "Modelos", href: "/templates" },
   { label: "Configurações", href: "/settings" }
-];
+] as const;
 
 function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () => void }) {
   return (

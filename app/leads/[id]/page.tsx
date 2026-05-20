@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AppShell } from "@/components/AppShell";
 import { createServerClient } from "@/lib/supabase-client";
+import { asRoute } from "@/lib/utils";
 
 type LeadDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -59,7 +60,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
             </div>
             <div className="flex items-center gap-4">
               <Link
-                href={`/leads/${id}/edit`}
+                href={asRoute(`/leads/${id}/edit`)}
                 className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
               >
                 Editar lead
@@ -147,7 +148,7 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
                     {(lead.proposals ?? []).map((proposal: any) => (
                       <Link
                         key={proposal.id}
-                        href={`/proposals/${proposal.id}`}
+                        href={asRoute(`/proposals/${proposal.id}`)}
                         className="block rounded-3xl border border-slate-200/80 bg-slate-50 p-4 transition hover:border-brand-300"
                       >
                         <p className="font-semibold text-slate-900">{proposal.title}</p>

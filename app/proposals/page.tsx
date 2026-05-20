@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/AppShell";
+import { asRoute } from "@/lib/utils";
 
 export default async function ProposalsPage() {
   const supabase = await createServerClient();
@@ -41,7 +42,7 @@ export default async function ProposalsPage() {
               <div className="flex flex-col gap-3 sm:items-end">
                 <Badge variant={proposal.status === "accepted" ? "success" : proposal.status === "rejected" ? "warning" : "accent"}>{proposal.status === "accepted" ? "Aceita" : proposal.status === "rejected" ? "Rejeitada" : "Pendente"}</Badge>
                 <p className="text-xl font-semibold text-slate-950">R$ {proposal.price.toLocaleString("pt-BR")}</p>
-                <Link href={`/proposals/${proposal.id}`} className="text-sm font-medium text-brand-600 hover:text-brand-500">
+                <Link href={asRoute(`/proposals/${proposal.id}`)} className="text-sm font-medium text-brand-600 hover:text-brand-500">
                   Ver proposta
                 </Link>
               </div>

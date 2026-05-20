@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AppShell } from "@/components/AppShell";
+import { asRoute } from "@/lib/utils";
 
 export default async function ContractsPage() {
   const supabase = await createServerClient();
@@ -47,7 +48,7 @@ export default async function ContractsPage() {
                     <Badge variant={contract.status === "signed" ? "success" : contract.status === "expired" ? "warning" : "default"}>{contract.status === "signed" ? "Assinado" : contract.status === "expired" ? "Expirado" : contract.status}</Badge>
                     <p className="text-sm text-slate-500">Criado {new Date(contract.created_at).toLocaleDateString("pt-BR")}</p>
                     <Link
-                      href={`/contracts/${contract.id}/edit`}
+                      href={asRoute(`/contracts/${contract.id}/edit`)}
                       className="text-xs font-medium text-brand-600 hover:text-brand-500"
                     >
                       Editar

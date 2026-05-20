@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { asRoute } from "@/lib/utils";
 
 type Template = {
   id: string;
@@ -167,7 +168,7 @@ export function TemplateList({ templates, leads = [], trainerName = "" }: Props)
 
               <div className="flex items-center gap-3">
                 <Link
-                  href={`/templates/${template.id}/edit`}
+                  href={asRoute(`/templates/${template.id}/edit`)}
                   className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
                 >
                   Editar

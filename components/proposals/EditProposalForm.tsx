@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { asRoute } from "@/lib/utils";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -88,7 +89,7 @@ export function EditProposalForm({ proposal }: { proposal: InitialProposal }) {
 
     try {
       await promise;
-      router.push(`/proposals/${proposal.id}`);
+      router.push(asRoute(`/proposals/${proposal.id}`));
       router.refresh();
     } catch {
       setLoading(false);
@@ -103,7 +104,7 @@ export function EditProposalForm({ proposal }: { proposal: InitialProposal }) {
           <h1 className="text-3xl font-semibold text-slate-950">{proposal.title}</h1>
           <p className="mt-1 text-sm text-slate-500">Lead: {proposal.lead_name}</p>
         </div>
-        <Link href={`/proposals/${proposal.id}`} className="text-sm font-medium text-brand-600 hover:text-brand-500">
+        <Link href={asRoute(`/proposals/${proposal.id}`)} className="text-sm font-medium text-brand-600 hover:text-brand-500">
           Voltar à proposta
         </Link>
       </div>

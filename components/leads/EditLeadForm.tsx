@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { asRoute } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -113,7 +114,7 @@ export function EditLeadForm({ lead }: { lead: InitialLead }) {
 
     try {
       await promise;
-      router.push(`/leads/${lead.id}`);
+      router.push(asRoute(`/leads/${lead.id}`));
       router.refresh();
     } catch {
       setSaving(false);
@@ -127,7 +128,7 @@ export function EditLeadForm({ lead }: { lead: InitialLead }) {
           <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Editar lead</p>
           <h1 className="text-3xl font-semibold text-slate-950">{lead.name}</h1>
         </div>
-        <Link href={`/leads/${lead.id}`} className="text-sm font-medium text-brand-600 hover:text-brand-500">
+        <Link href={asRoute(`/leads/${lead.id}`)} className="text-sm font-medium text-brand-600 hover:text-brand-500">
           Voltar ao lead
         </Link>
       </div>

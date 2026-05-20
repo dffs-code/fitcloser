@@ -50,7 +50,7 @@ export default function LoginPage() {
     }
 
     const next = searchParams.get("next") ?? "/dashboard";
-    router.push(next);
+    router.push(next as any);
   };
 
   return (
