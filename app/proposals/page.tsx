@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase-client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Navigation } from "@/components/Navigation";
+import { AppShell } from "@/components/AppShell";
 
 export default async function ProposalsPage() {
   const supabase = await createServerClient();
@@ -19,10 +19,8 @@ export default async function ProposalsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
-        <Navigation />
-        <div className="space-y-6">
+    <AppShell>
+      <div className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Propostas</p>
@@ -54,9 +52,8 @@ export default async function ProposalsPage() {
               Ainda não há propostas. Crie uma nova proposta para enviar uma oferta profissional ao seu lead.
             </Card>
           ) : null}
-        </div>
       </div>
-    </div>
-  </div>
+      </div>
+    </AppShell>
   );
 }

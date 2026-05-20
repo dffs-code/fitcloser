@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -17,7 +17,6 @@ import {
 } from "@dnd-kit/core";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -26,29 +25,14 @@ import { cn } from "@/lib/utils";
 import type { Lead, LeadStatus } from "@/types";
 
 const SOURCE_OPTIONS = [
-  "Instagram",
-  "WhatsApp",
-  "Indicação",
-  "Google",
-  "Facebook",
-  "TikTok",
-  "YouTube",
-  "Site",
-  "Evento",
-  "Outro",
+  "Instagram", "WhatsApp", "Indicação", "Google", "Facebook",
+  "TikTok", "YouTube", "Site", "Evento", "Outro",
 ];
 
 const GOAL_SUGGESTIONS = [
-  "Perda de peso",
-  "Ganho de massa muscular",
-  "Condicionamento físico",
-  "Definição corporal",
-  "Hipertrofia",
-  "Reabilitação",
-  "Melhora da saúde",
-  "Resistência cardiovascular",
-  "Flexibilidade",
-  "Preparação esportiva",
+  "Perda de peso", "Ganho de massa muscular", "Condicionamento físico",
+  "Definição corporal", "Hipertrofia", "Reabilitação", "Melhora da saúde",
+  "Resistência cardiovascular", "Flexibilidade", "Preparação esportiva",
 ];
 
 function formatPhone(value: string): string {
@@ -61,23 +45,19 @@ function formatPhone(value: string): string {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-// Pipeline stages with their display labels and visual heat indicator.
-// "warning" = high-intent stages where speed matters (amber).
-// "success" = closed-won (green).
-// "accent" = active/progressing (blue).
 const statusMap: {
   key: LeadStatus;
   label: string;
   color: "default" | "accent" | "success" | "warning";
   heatLabel: string;
 }[] = [
-  { key: "New Lead",              label: "Novo lead",         color: "accent",  heatLabel: "Novo"   },
-  { key: "Contacted",             label: "Contatado",         color: "default", heatLabel: "Ativo"  },
-  { key: "Evaluation Scheduled",  label: "Avaliação agendada",color: "warning", heatLabel: "Quente" },
-  { key: "Proposal Sent",         label: "Proposta enviada",  color: "accent",  heatLabel: "Ativo"  },
-  { key: "Negotiation",           label: "Negociação",        color: "warning", heatLabel: "Quente" },
-  { key: "Closed Won",            label: "Fechado ganho",     color: "success", heatLabel: "Ganho"  },
-  { key: "Closed Lost",           label: "Fechado perdido",   color: "default", heatLabel: "Perdido"},
+  { key: "New Lead",             label: "Novo lead",          color: "accent",  heatLabel: "Novo"    },
+  { key: "Contacted",            label: "Contatado",          color: "default", heatLabel: "Ativo"   },
+  { key: "Evaluation Scheduled", label: "Avaliação ag.",      color: "warning", heatLabel: "Quente"  },
+  { key: "Proposal Sent",        label: "Proposta env.",      color: "accent",  heatLabel: "Ativo"   },
+  { key: "Negotiation",          label: "Negociação",         color: "warning", heatLabel: "Quente"  },
+  { key: "Closed Won",           label: "Fechado ganho",      color: "success", heatLabel: "Ganho"   },
+  { key: "Closed Lost",          label: "Perdido",            color: "default", heatLabel: "Perdido" },
 ];
 
 const statusLabelMap: Record<string, string> = Object.fromEntries(
@@ -86,38 +66,51 @@ const statusLabelMap: Record<string, string> = Object.fromEntries(
 
 type PipelineBoardProps = { initialLeads: Lead[] };
 
-// ─── Shared card content ─────────────────────────────────────────────────────
-// Extracted so it can be reused by both the draggable card and the overlay.
+// ─── Card content (shared between draggable and overlay) ──────────────────────
 
 function LeadCardContent({ lead }: { lead: Lead }) {
+  const statusInfo = statusMap.find((s) => s.key === lead.status);
   return (
     <>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-slate-900">{lead.name}</p>
-          <p className="mt-1 truncate text-xs text-slate-500">{lead.goal}</p>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-sm font-semibold leading-snug text-slate-900 line-clamp-2 min-w-0">{lead.name}</p>
+        {statusInfo && (
+          <Badge variant={statusInfo.color} className="mt-0.5 shrink-0">
+            {statusInfo.heatLabel}
+          </Badge>
+        )}
+      </div>
+      {lead.goal ? (
+        <p className="mt-1 truncate text-xs text-slate-500">{lead.goal}</p>
+      ) : null}
+      {lead.tags && lead.tags.length > 0 && (
+        <div className="mt-1.5 flex flex-wrap gap-1">
+          {lead.tags.slice(0, 2).map((tag) => (
+            <span key={tag} className="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+              {tag}
+            </span>
+          ))}
+          {lead.tags.length > 2 && (
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+              +{lead.tags.length - 2}
+            </span>
+          )}
         </div>
-        <Badge variant={lead.status === "Closed Won" ? "success" : "default"}>
-          {statusLabelMap[lead.status] ?? lead.status}
-        </Badge>
-      </div>
-      <div className="mt-3 space-y-1 text-xs text-slate-600">
-        {lead.phone ? <p>{lead.phone}</p> : null}
-        {lead.email ? <p className="truncate">{lead.email}</p> : null}
-        {lead.estimated_value ? (
-          <p className="font-medium text-emerald-700">
-            R$ {Number(lead.estimated_value).toLocaleString("pt-BR")}
-          </p>
-        ) : null}
-      </div>
+      )}
+      {lead.estimated_value ? (
+        <p className="mt-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+          R$ {Number(lead.estimated_value).toLocaleString("pt-BR")}
+        </p>
+      ) : null}
     </>
   );
 }
 
-// ─── Draggable card (stays in column, becomes ghost while dragging) ───────────
+// ─── Draggable card ────────────────────────────────────────────────────────────
 
 function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: lead.id });
+  const statusInfo = statusMap.find((s) => s.key === lead.status);
 
   return (
     <div
@@ -125,57 +118,63 @@ function LeadCard({ lead, onClick }: { lead: Lead; onClick: () => void }) {
       {...listeners}
       {...attributes}
       className={cn(
-        "cursor-grab rounded-3xl border border-slate-200 bg-white p-4 shadow-sm transition-opacity active:cursor-grabbing",
-        // Ghosted while dragging — the DragOverlay is the visual card
+        "cursor-grab rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-opacity active:cursor-grabbing dark:border-slate-700 dark:bg-slate-800",
         isDragging && "opacity-40"
       )}
     >
-      {/* Name is clickable for navigation; rest of card is drag handle */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p
-            onClick={(e) => { e.stopPropagation(); onClick(); }}
-            className="cursor-pointer text-sm font-semibold text-slate-900 underline-offset-2 hover:text-brand-600 hover:underline"
-          >
-            {lead.name}
-          </p>
-          <p className="mt-1 truncate text-xs text-slate-500">{lead.goal}</p>
+      <div className="flex items-start justify-between gap-2">
+        <p
+          onClick={(e) => { e.stopPropagation(); onClick(); }}
+          className="cursor-pointer text-sm font-semibold leading-snug text-slate-900 underline-offset-2 hover:text-brand-600 hover:underline line-clamp-2 min-w-0"
+        >
+          {lead.name}
+        </p>
+        {statusInfo && (
+          <Badge variant={statusInfo.color} className="mt-0.5 shrink-0">
+            {statusInfo.heatLabel}
+          </Badge>
+        )}
+      </div>
+      {lead.goal ? (
+        <p className="mt-1 truncate text-xs text-slate-500">{lead.goal}</p>
+      ) : null}
+      {lead.tags && lead.tags.length > 0 && (
+        <div className="mt-1.5 flex flex-wrap gap-1">
+          {lead.tags.slice(0, 2).map((tag) => (
+            <span key={tag} className="rounded-full bg-brand-50 px-2 py-0.5 text-[10px] font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300">
+              {tag}
+            </span>
+          ))}
+          {lead.tags.length > 2 && (
+            <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+              +{lead.tags.length - 2}
+            </span>
+          )}
         </div>
-        <Badge variant={lead.status === "Closed Won" ? "success" : "default"}>
-          {statusLabelMap[lead.status] ?? lead.status}
-        </Badge>
-      </div>
-      <div className="mt-3 space-y-1 text-xs text-slate-600">
-        {lead.phone ? <p>{lead.phone}</p> : null}
-        {lead.email ? <p className="truncate">{lead.email}</p> : null}
-        {lead.estimated_value ? (
-          <p className="font-medium text-emerald-700">
-            R$ {Number(lead.estimated_value).toLocaleString("pt-BR")}
-          </p>
-        ) : null}
-      </div>
+      )}
+      {lead.estimated_value ? (
+        <p className="mt-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+          R$ {Number(lead.estimated_value).toLocaleString("pt-BR")}
+        </p>
+      ) : null}
     </div>
   );
 }
 
-// ─── Overlay card (floats above everything while dragging) ────────────────────
-// Rendered by DragOverlay — no ref/listeners needed, just the visual shell.
+// ─── Overlay card ──────────────────────────────────────────────────────────────
 
 function LeadCardOverlay({ lead }: { lead: Lead }) {
   return (
-    <div className="cursor-grabbing rounded-3xl border border-brand-300 bg-white p-4 shadow-2xl ring-2 ring-brand-400/60">
+    <div className="w-[240px] cursor-grabbing rounded-xl border border-brand-300 bg-white p-3 shadow-2xl ring-2 ring-brand-400/60 dark:bg-slate-800">
       <LeadCardContent lead={lead} />
     </div>
   );
 }
 
-// ─── Droppable column ─────────────────────────────────────────────────────────
+// ─── Droppable column ──────────────────────────────────────────────────────────
 
 function Column({
-  status,
-  leads,
-  isActiveOver,
-  onLeadClick,
+  status, leads, isActiveOver, onLeadClick,
 }: {
   status: (typeof statusMap)[number];
   leads: Lead[];
@@ -188,27 +187,21 @@ function Column({
     <div
       ref={setNodeRef}
       className={cn(
-        "rounded-[2rem] border p-4 transition-colors duration-150",
+        "flex min-w-[240px] flex-1 flex-col rounded-2xl border p-3 transition-colors duration-150",
         isActiveOver
-          ? "border-brand-400 bg-brand-50/50"
-          : "border-slate-200/80 bg-slate-50/70"
+          ? "border-brand-400 bg-brand-50/50 dark:bg-brand-50/10"
+          : "border-slate-200/80 bg-slate-50/70 dark:border-slate-700/60 dark:bg-slate-900/60"
       )}
     >
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <div>
-          <p className="text-sm font-semibold text-slate-900">{status.label}</p>
-          <p className="text-xs text-slate-500">{leads.length} contatos</p>
-        </div>
-        {/* Heat label: visual indicator of urgency for this stage */}
-        <Badge variant={status.color}>{status.heatLabel}</Badge>
+      <div className="mb-2.5 flex shrink-0 items-center justify-between gap-2 px-0.5">
+        <p className="truncate text-xs font-semibold text-slate-700 dark:text-slate-300">{status.label}</p>
+        <span className="shrink-0 rounded-full bg-slate-200/80 px-2 py-0.5 text-[10px] font-semibold text-slate-600 dark:bg-slate-700 dark:text-slate-400">{leads.length}</span>
       </div>
-      <div className="space-y-3 min-h-[4rem]">
+      <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
         {leads.length === 0 ? (
           <div className={cn(
-            "rounded-3xl border border-dashed p-4 text-center text-xs transition-colors duration-150",
-            isActiveOver
-              ? "border-brand-400 text-brand-500"
-              : "border-slate-300 text-slate-400"
+            "rounded-xl border border-dashed p-4 text-center text-xs transition-colors duration-150",
+            isActiveOver ? "border-brand-400 text-brand-500" : "border-slate-300 text-slate-400 dark:border-slate-600 dark:text-slate-500"
           )}>
             Solte aqui
           </div>
@@ -222,10 +215,7 @@ function Column({
   );
 }
 
-// ─── Custom collision detection ───────────────────────────────────────────────
-// Prefer pointer-inside-droppable; fall back to rect intersection.
-// This makes it much easier to drop into a column vs accidentally
-// triggering an adjacent column when the pointer is at the edge.
+// ─── Collision detection ───────────────────────────────────────────────────────
 
 const collisionDetection: CollisionDetection = (args) => {
   const pointerCollisions = pointerWithin(args);
@@ -233,18 +223,19 @@ const collisionDetection: CollisionDetection = (args) => {
   return rectIntersection(args);
 };
 
-// ─── Main board ───────────────────────────────────────────────────────────────
+// ─── Add Lead Drawer ───────────────────────────────────────────────────────────
 
-export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
-  const router = useRouter();
-  const [leads, setLeads] = useState<Lead[]>(initialLeads);
-
-  useEffect(() => {
-    setLeads(initialLeads);
-  }, [initialLeads]);
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [overId, setOverId] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
+function AddLeadDrawer({
+  open,
+  onClose,
+  onSave,
+  saving,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSave: (e: React.FormEvent<HTMLFormElement>) => void;
+  saving: boolean;
+}) {
   const [form, setForm] = useState({
     name: "", email: "", phone: "", age: "",
     goal: "", source: "Instagram",
@@ -252,7 +243,6 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
   });
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
-  const [saving, setSaving] = useState(false);
 
   const addTag = (value: string) => {
     const trimmed = value.replace(/,/g, "").trim();
@@ -262,11 +252,156 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
 
   const removeTag = (tag: string) => setTags((prev) => prev.filter((t) => t !== tag));
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSave(e);
+    // Form is reset by parent after successful save
+  };
+
+  if (!open) return null;
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="fixed right-0 top-0 z-50 flex h-full w-full max-w-md flex-col overflow-y-auto bg-white shadow-2xl dark:bg-slate-900">
+        <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-700">
+          <div>
+            <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Pipeline</p>
+            <h2 className="text-lg font-semibold text-slate-950">Novo lead</h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-2xl border border-slate-200 p-2 text-slate-500 transition hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="add-lead-form" onSubmit={handleSubmit} className="flex-1 space-y-4 px-6 py-5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="d-name">Nome *</Label>
+              <Input id="d-name" placeholder="João Silva" value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
+            </div>
+            <div>
+              <Label htmlFor="d-email">E-mail *</Label>
+              <Input id="d-email" type="email" placeholder="joao@email.com" value={form.email}
+                onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
+            </div>
+            <div>
+              <Label htmlFor="d-phone">Telefone *</Label>
+              <Input id="d-phone" placeholder="(11) 99999-9999" value={form.phone}
+                onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))} required />
+            </div>
+            <div>
+              <Label htmlFor="d-age">Idade</Label>
+              <Input id="d-age" type="number" placeholder="30" min={10} max={100} value={form.age}
+                onChange={(e) => setForm((f) => ({ ...f, age: e.target.value }))} />
+            </div>
+            <div>
+              <Label htmlFor="d-goal">Objetivo *</Label>
+              <Input id="d-goal" list="d-goal-suggestions" placeholder="Ex: Perda de peso" value={form.goal}
+                onChange={(e) => setForm((f) => ({ ...f, goal: e.target.value }))} required />
+              <datalist id="d-goal-suggestions">
+                {GOAL_SUGGESTIONS.map((g) => <option key={g} value={g} />)}
+              </datalist>
+            </div>
+            <div>
+              <Label htmlFor="d-source">Fonte</Label>
+              <select id="d-source" value={form.source}
+                onChange={(e) => setForm((f) => ({ ...f, source: e.target.value }))}
+                className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100">
+                {SOURCE_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="d-value">Valor estimado (R$)</Label>
+              <div className="relative mt-1">
+                <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm text-slate-400">R$</span>
+                <Input id="d-value" type="number" min={0} step={0.01} placeholder="0,00"
+                  value={form.estimated_value}
+                  onChange={(e) => setForm((f) => ({ ...f, estimated_value: e.target.value }))}
+                  className="pl-10" />
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="d-followup">Próximo follow-up</Label>
+              <Input id="d-followup" type="date" value={form.next_follow_up}
+                onChange={(e) => setForm((f) => ({ ...f, next_follow_up: e.target.value }))} />
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="d-tag-input">Tags</Label>
+            {tags.length > 0 && (
+              <div className="mb-2 mt-1 flex flex-wrap gap-1.5">
+                {tags.map((tag) => (
+                  <span key={tag} className="flex items-center gap-1 rounded-full border border-brand-200 bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700">
+                    {tag}
+                    <button type="button" onClick={() => removeTag(tag)} className="leading-none text-brand-400 hover:text-brand-700">×</button>
+                  </span>
+                ))}
+              </div>
+            )}
+            <Input id="d-tag-input" placeholder="Ex: musculação — Enter para adicionar"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === ",") { e.preventDefault(); addTag(tagInput); }
+                if (e.key === "Backspace" && !tagInput && tags.length > 0) setTags((p) => p.slice(0, -1));
+              }}
+              onBlur={() => { if (tagInput.trim()) addTag(tagInput); }}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="d-notes">Notas</Label>
+            <Textarea id="d-notes" rows={3} placeholder="Observações sobre o lead..."
+              value={form.notes}
+              onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} />
+          </div>
+
+          {/* Hidden inputs to pass tags to parent */}
+          <input type="hidden" name="_tags" value={JSON.stringify(tags)} />
+          <input type="hidden" name="_form" value={JSON.stringify(form)} />
+        </form>
+
+        <div className="border-t border-slate-200 px-6 py-4 dark:border-slate-700">
+          <div className="flex gap-3">
+            <Button variant="secondary" type="button" onClick={onClose} className="flex-1">Cancelar</Button>
+            <Button type="submit" form="add-lead-form" disabled={saving} className="flex-1">
+              {saving ? "Salvando..." : "Adicionar lead"}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ─── Main board ────────────────────────────────────────────────────────────────
+
+export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
+  const router = useRouter();
+  const [leads, setLeads] = useState<Lead[]>(initialLeads);
+
+  useEffect(() => { setLeads(initialLeads); }, [initialLeads]);
+
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      // Require 6px movement before drag starts — prevents accidental drags on click
-      activationConstraint: { distance: 6 }
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
   );
 
   const activeLead = useMemo(
@@ -275,27 +410,31 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
   );
 
   const filteredLeads = useMemo(
-    () =>
-      leads.filter(
-        (lead) =>
-          lead.name.toLowerCase().includes(search.toLowerCase()) ||
-          (lead.email ?? "").toLowerCase().includes(search.toLowerCase()) ||
-          (lead.goal ?? "").toLowerCase().includes(search.toLowerCase())
-      ),
+    () => leads.filter(
+      (lead) =>
+        lead.name.toLowerCase().includes(search.toLowerCase()) ||
+        (lead.email ?? "").toLowerCase().includes(search.toLowerCase()) ||
+        (lead.goal ?? "").toLowerCase().includes(search.toLowerCase())
+    ),
     [leads, search]
   );
 
   const grouped = useMemo(
-    () =>
-      statusMap.reduce(
-        (acc, s) => ({ ...acc, [s.key]: filteredLeads.filter((l) => l.status === s.key) }),
-        {} as Record<LeadStatus, Lead[]>
-      ),
+    () => statusMap.reduce(
+      (acc, s) => ({ ...acc, [s.key]: filteredLeads.filter((l) => l.status === s.key) }),
+      {} as Record<LeadStatus, Lead[]>
+    ),
     [filteredLeads]
   );
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formEl = e.currentTarget;
+    const tagsRaw = (formEl.querySelector('input[name="_tags"]') as HTMLInputElement)?.value ?? "[]";
+    const formRaw = (formEl.querySelector('input[name="_form"]') as HTMLInputElement)?.value ?? "{}";
+    const tags = JSON.parse(tagsRaw) as string[];
+    const form = JSON.parse(formRaw) as Record<string, string>;
+
     setSaving(true);
     const promise = fetch("/api/leads", {
       method: "POST",
@@ -312,17 +451,15 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
     toast.promise(promise, {
       loading: "Adicionando lead...",
       success: `${form.name} adicionado ao pipeline!`,
-      error: (err) => err.message
+      error: (err: Error) => err.message
     });
 
     try {
       await promise;
-      setForm({ name: "", email: "", phone: "", age: "", goal: "", source: "Instagram", estimated_value: "", next_follow_up: "", notes: "" });
-      setTags([]);
-      setTagInput("");
+      setDrawerOpen(false);
       router.refresh();
     } catch {
-      // error already shown by toast
+      // error shown by toast
     } finally {
       setSaving(false);
     }
@@ -336,24 +473,17 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
       body: JSON.stringify({ action: "update-status", leadId, status })
     });
     if (res.ok) {
-      const label = statusMap.find((s) => s.key === status)?.label ?? status;
-      toast.success(`Movido para ${label}`, { duration: 2000 });
+      toast.success(`Movido para ${statusMap.find((s) => s.key === status)?.label ?? status}`, { duration: 2000 });
       router.refresh();
     } else {
-      // Roll back optimistic update
       setLeads((prev) => prev.map((l) => (l.id === leadId ? { ...l, status: l.status } : l)));
       toast.error("Erro ao atualizar status.");
     }
   };
 
-  const handleDragStart = ({ active }: DragStartEvent) => {
-    setActiveId(active.id.toString());
-  };
-
-  const handleDragOver = ({ over }: { over: { id: string | number } | null }) => {
+  const handleDragStart = ({ active }: DragStartEvent) => setActiveId(active.id.toString());
+  const handleDragOver = ({ over }: { over: { id: string | number } | null }) =>
     setOverId(over ? over.id.toString() : null);
-  };
-
   const handleDragEnd = ({ active, over }: DragEndEvent) => {
     setActiveId(null);
     setOverId(null);
@@ -361,216 +491,33 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
     const newStatus = over.id.toString() as LeadStatus;
     if (statusMap.some((s) => s.key === newStatus)) {
       const lead = leads.find((l) => l.id === active.id.toString());
-      if (lead && lead.status !== newStatus) {
-        updateStatus(active.id.toString(), newStatus);
-      }
+      if (lead && lead.status !== newStatus) updateStatus(active.id.toString(), newStatus);
     }
   };
-
-  const handleDragCancel = () => {
-    setActiveId(null);
-    setOverId(null);
-  };
+  const handleDragCancel = () => { setActiveId(null); setOverId(null); };
 
   return (
-    <div className="space-y-8">
-      {/* Add lead + pipeline health */}
-      <div className="grid gap-4 xl:grid-cols-[1fr_0.92fr]">
-        <Card className="space-y-5">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Pipeline</p>
-              <h1 className="text-3xl font-semibold text-slate-950">Quadro de vendas</h1>
-            </div>
-            <div className="rounded-3xl bg-slate-100 p-4 text-sm text-slate-700">
-              Arraste leads entre etapas ou clique no nome para abrir.
-            </div>
-          </div>
+    <div className="flex h-full flex-col gap-3">
+      {/* ── Toolbar ────────────────────────────────────────────────────────── */}
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Pipeline</p>
+          <h1 className="text-2xl font-semibold text-slate-950">Quadro de vendas</h1>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
           <Input
-            placeholder="Buscar por nome, e-mail ou objetivo"
+            placeholder="Buscar lead..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            className="h-9 w-44 text-sm xl:w-56"
           />
-          <form
-            onSubmit={handleCreate}
-            className="space-y-4 rounded-3xl border border-slate-200/80 bg-slate-50/70 p-5"
-          >
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="name">Nome *</Label>
-                <Input
-                  id="name"
-                  placeholder="João Silva"
-                  value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">E-mail *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="joao@email.com"
-                  value={form.email}
-                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone">Telefone *</Label>
-                <Input
-                  id="phone"
-                  placeholder="(11) 99999-9999"
-                  value={form.phone}
-                  onChange={(e) => setForm((f) => ({ ...f, phone: formatPhone(e.target.value) }))}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="age">Idade</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  placeholder="30"
-                  min={10}
-                  max={100}
-                  value={form.age}
-                  onChange={(e) => setForm((f) => ({ ...f, age: e.target.value }))}
-                />
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="goal">Objetivo *</Label>
-                <Input
-                  id="goal"
-                  list="goal-suggestions"
-                  placeholder="Ex: Perda de peso"
-                  value={form.goal}
-                  onChange={(e) => setForm((f) => ({ ...f, goal: e.target.value }))}
-                  required
-                />
-                <datalist id="goal-suggestions">
-                  {GOAL_SUGGESTIONS.map((g) => <option key={g} value={g} />)}
-                </datalist>
-              </div>
-              <div>
-                <Label htmlFor="source">Fonte</Label>
-                <select
-                  id="source"
-                  value={form.source}
-                  onChange={(e) => setForm((f) => ({ ...f, source: e.target.value }))}
-                  className="mt-1 w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500"
-                >
-                  {SOURCE_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="estimated_value">Valor estimado (R$)</Label>
-                <div className="relative mt-1">
-                  <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center text-sm text-slate-400">R$</span>
-                  <Input
-                    id="estimated_value"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    placeholder="0,00"
-                    value={form.estimated_value}
-                    onChange={(e) => setForm((f) => ({ ...f, estimated_value: e.target.value }))}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="next_follow_up">Próximo follow-up</Label>
-                <Input
-                  id="next_follow_up"
-                  type="date"
-                  value={form.next_follow_up}
-                  onChange={(e) => setForm((f) => ({ ...f, next_follow_up: e.target.value }))}
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="tag-input">Tags</Label>
-              {tags.length > 0 && (
-                <div className="mb-2 mt-1 flex flex-wrap gap-1.5">
-                  {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="flex items-center gap-1 rounded-full border border-brand-200 bg-brand-50 px-2.5 py-0.5 text-xs font-medium text-brand-700"
-                    >
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => removeTag(tag)}
-                        className="leading-none text-brand-400 hover:text-brand-700"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
-              <Input
-                id="tag-input"
-                placeholder="Ex: musculação, emagrecimento — Enter para adicionar"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === ",") {
-                    e.preventDefault();
-                    addTag(tagInput);
-                  }
-                  if (e.key === "Backspace" && !tagInput && tags.length > 0) {
-                    setTags((prev) => prev.slice(0, -1));
-                  }
-                }}
-                onBlur={() => { if (tagInput.trim()) addTag(tagInput); }}
-              />
-            </div>
-            <div>
-              <Label htmlFor="notes">Notas</Label>
-              <Textarea
-                id="notes"
-                rows={2}
-                placeholder="Observações sobre o lead..."
-                value={form.notes}
-                onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-              />
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <p className="text-sm text-slate-600">Adicione um novo lead na etapa inicial.</p>
-              <Button type="submit" disabled={saving}>{saving ? "Salvando..." : "Adicionar lead"}</Button>
-            </div>
-          </form>
-        </Card>
-
-        <Card className="space-y-4">
-          <div>
-            <h2 className="text-xl font-semibold text-slate-950">Saúde do pipeline</h2>
-            <p className="mt-2 text-sm text-slate-500">Monitorar etapas que precisam de atenção.</p>
-          </div>
-          <div className="grid gap-3">
-            {statusMap.map((s) => (
-              <div key={s.key} className="rounded-3xl border border-slate-200/80 bg-white p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="font-semibold text-slate-900">{s.label}</p>
-                  <Badge variant={s.color}>{grouped[s.key]?.length ?? 0}</Badge>
-                </div>
-                <p className="mt-1 text-xs text-slate-500">
-                  {grouped[s.key]?.length ?? 0} lead(s) &middot; {s.heatLabel}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Card>
+          <Button onClick={() => setDrawerOpen(true)} className="h-9 px-4 text-sm">
+            + Novo lead
+          </Button>
+        </div>
       </div>
 
-      {/* Kanban board — explicit id prevents the aria-describedby SSR/client mismatch */}
+      {/* ── Kanban board ────────────────────────────────────────────────────── */}
       <DndContext
         id="pipeline-dnd-board"
         sensors={sensors}
@@ -580,24 +527,32 @@ export function PipelineBoard({ initialLeads }: PipelineBoardProps) {
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="grid gap-4 xl:grid-cols-3 2xl:grid-cols-4">
-          {statusMap.map((s) => (
-            <Column
-              key={s.key}
-              status={s}
-              leads={grouped[s.key] ?? []}
-              isActiveOver={overId === s.key}
-              onLeadClick={(id) => router.push(`/leads/${id}`)}
-            />
-          ))}
+        <div className="min-h-0 flex-1 overflow-x-auto overflow-y-hidden pb-1">
+          <div className="flex h-full gap-2.5">
+            {statusMap.map((s) => (
+              <Column
+                key={s.key}
+                status={s}
+                leads={grouped[s.key] ?? []}
+                isActiveOver={overId === s.key}
+                onLeadClick={(id) => router.push(`/leads/${id}`)}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* DragOverlay renders a floating clone that follows the cursor.
-            It lives outside the scroll container so it is never clipped. */}
         <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)" }}>
           {activeLead ? <LeadCardOverlay lead={activeLead} /> : null}
         </DragOverlay>
       </DndContext>
+
+      {/* ── Add lead slide-over ──────────────────────────────────────────────── */}
+      <AddLeadDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        onSave={handleCreate}
+        saving={saving}
+      />
     </div>
   );
 }

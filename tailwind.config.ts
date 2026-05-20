@@ -27,7 +27,7 @@ const config: Config = {
         glow: "0 20px 80px rgba(56, 81, 255, 0.12)"
       },
       backgroundImage: {
-        "soft-radial": "radial-gradient(circle at top, rgba(99,102,241,0.18), transparent 36%)"
+        "soft-radial": "radial-gradient(circle at top, rgba(99,102,241,0.18), transparent 55%)"
       }
     }
   },

@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@/lib/supabase-client";
 
+const statusLabels: Record<string, string> = {
+  "New Lead": "Novo lead",
+  "Contacted": "Contatado",
+  "Evaluation Scheduled": "Avaliação agendada",
+  "Proposal Sent": "Proposta enviada",
+  "Negotiation": "Negociação",
+  "Closed Won": "Fechado ganho",
+  "Closed Lost": "Perdido"
+};
+
 export async function POST(request: NextRequest) {
   const supabase = await createServerClient();
   const {
@@ -41,7 +51,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    supabase.from("activities").insert([
+    await supabase.from("activities").insert([
       {
         trainer_id: user.id,
         lead_id: lead.id,
@@ -50,6 +60,36 @@ export async function POST(request: NextRequest) {
     ]);
 
     return NextResponse.json({ success: true, id: lead.id });
+  }
+
+  if (action === "update" && leadId) {
+    const { error } = await supabase
+      .from("leads")
+      .update({
+        name,
+        email,
+        phone,
+        age: age ? Number(age) : null,
+        goal,
+        source,
+        status,
+        tags: Array.isArray(tags) ? tags : [],
+        notes: notes ?? "",
+        estimated_value: estimated_value ? Number(estimated_value) : null,
+        next_follow_up: next_follow_up || null
+      })
+      .eq("id", leadId)
+      .eq("trainer_id", user.id);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    await supabase.from("activities").insert([
+      { trainer_id: user.id, lead_id: leadId, description: `Lead atualizado: ${name}` }
+    ]);
+
+    return NextResponse.json({ success: true });
   }
 
   if (action === "update-status" && leadId && status) {
@@ -63,11 +103,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    supabase.from("activities").insert([
+    await supabase.from("activities").insert([
       {
         trainer_id: user.id,
         lead_id: leadId,
-        description: `Status atualizado para: ${status}`
+        description: `Lead movido para: ${statusLabels[status] ?? status}`
       }
     ]);
 

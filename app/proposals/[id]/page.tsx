@@ -2,14 +2,15 @@
 import { redirect } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Navigation } from "@/components/Navigation";
+import { AppShell } from "@/components/AppShell";
 import { createServerClient } from "@/lib/supabase-client";
 
 type ProposalPageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export default async function ProposalDetailPage({ params }: ProposalPageProps) {
+  const { id } = await params;
   const supabase = await createServerClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -19,7 +20,7 @@ export default async function ProposalDetailPage({ params }: ProposalPageProps) 
     .from("proposals")
     .select("id,title,token,plan,frequency,duration_weeks,price,observations,payment_conditions,status,created_at,leads(name,email)")
     .eq("trainer_id", user.id)
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (error || !proposal) {
@@ -45,10 +46,8 @@ export default async function ProposalDetailPage({ params }: ProposalPageProps) 
       : "accent";
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
-        <Navigation />
-        <div className="mx-auto w-full max-w-4xl space-y-6">
+    <AppShell>
+      <div className="mx-auto w-full max-w-4xl space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-slate-500">
@@ -115,12 +114,17 @@ export default async function ProposalDetailPage({ params }: ProposalPageProps) 
           </Card>
 
           <div className="flex items-center gap-4">
+            <Link
+              href={`/proposals/${id}/edit`}
+              className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+            >
+              Editar proposta
+            </Link>
             <Link href="/proposals" className="text-sm font-medium text-brand-600 hover:text-brand-500">
               ← Voltar para propostas
             </Link>
           </div>
         </div>
-      </div>
-    </div>
+    </AppShell>
   );
 }

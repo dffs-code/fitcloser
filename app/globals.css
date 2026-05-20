@@ -42,3 +42,62 @@ select {
   background: rgba(59, 130, 246, 0.24);
   color: #0f172a;
 }
+
+/* Dark mode */
+.dark body {
+  background-color: #0c1120;
+  background-image:
+    radial-gradient(ellipse 140% 100% at 50% 0%, rgba(99, 102, 241, 0.13), transparent),
+    radial-gradient(ellipse 80% 65% at 85% 0%, rgba(59, 130, 246, 0.09), transparent);
+  color: #f1f5f9;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #f8fafc;
+}
+
+.dark select {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+.dark option {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.dark ::selection {
+  background: rgba(99, 102, 241, 0.35);
+  color: #f8fafc;
+}
+
+/* ─── Dark mode: bulk color token overrides ─────────────────────────────────
+   These win over single-class Tailwind utilities because the .dark ancestor
+   adds a second class to the specificity chain.                              */
+
+.dark .text-slate-950 { color: #f8fafc; }
+.dark .text-slate-900 { color: #f1f5f9; }
+.dark .text-slate-800 { color: #e2e8f0; }
+.dark .text-slate-700 { color: #cbd5e1; }
+.dark .text-slate-600 { color: #94a3b8; }
+.dark .text-slate-500 { color: #64748b; }
+.dark .text-slate-400 { color: #475569; }
+
+.dark .text-emerald-700 { color: #34d399; }
+
+.dark .bg-slate-50  { background-color: #1e293b; }
+.dark .bg-slate-100 { background-color: #334155; }
+.dark .bg-white     { background-color: #1e293b; }
+
+/* Tailwind opacity variants */
+.dark .bg-white\/95 { background-color: rgba(30, 41, 59, 0.95); }
+.dark .bg-white\/90 { background-color: rgba(30, 41, 59, 0.9); }
+.dark .bg-slate-50\/70 { background-color: rgba(30, 41, 59, 0.7); }
+
+.dark .border-slate-200    { border-color: #334155; }
+.dark .border-slate-200\/80 { border-color: rgba(51, 65, 85, 0.8); }
+.dark .border-slate-300    { border-color: #475569; }
+
+/* Drop-zone highlight in dark mode */
+.dark .bg-brand-50\/50 { background-color: rgba(60, 93, 255, 0.12); }

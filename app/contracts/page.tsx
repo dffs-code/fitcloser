@@ -4,7 +4,7 @@ import { createServerClient } from "@/lib/supabase-client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Navigation } from "@/components/Navigation";
+import { AppShell } from "@/components/AppShell";
 
 export default async function ContractsPage() {
   const supabase = await createServerClient();
@@ -19,10 +19,8 @@ export default async function ContractsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
-        <Navigation />
-        <div className="space-y-6">
+    <AppShell>
+      <div className="space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Contratos</p>
@@ -48,13 +46,18 @@ export default async function ContractsPage() {
                   <div className="flex flex-col items-start gap-3 sm:items-end">
                     <Badge variant={contract.status === "signed" ? "success" : contract.status === "expired" ? "warning" : "default"}>{contract.status === "signed" ? "Assinado" : contract.status === "expired" ? "Expirado" : contract.status}</Badge>
                     <p className="text-sm text-slate-500">Criado {new Date(contract.created_at).toLocaleDateString("pt-BR")}</p>
+                    <Link
+                      href={`/contracts/${contract.id}/edit`}
+                      className="text-xs font-medium text-brand-600 hover:text-brand-500"
+                    >
+                      Editar
+                    </Link>
                   </div>
                 </Card>
               ))
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </AppShell>
   );
 }

@@ -4,7 +4,7 @@
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
         {/* Sidebar skeleton */}
         <aside className="hidden xl:block">
-          <div className="animate-pulse space-y-5 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-glow">
+          <div className="animate-pulse space-y-5 rounded-3xl border border-slate-200/80 bg-white p-6">
             <div className="h-7 w-28 rounded-full bg-slate-200" />
             <div className="space-y-2 pt-2">
               {Array.from({ length: 7 }).map((_, i) => (

@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -106,7 +107,7 @@ export function TemplateList({ templates, leads = [], trainerName = "" }: Props)
     <div className="space-y-6">
       {header}
       {hasAnyVariable && leads.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-3xl border border-slate-200/80 bg-white p-4 shadow-glow sm:flex-row sm:items-center sm:gap-3">
+        <div className="flex flex-col gap-2 rounded-3xl border border-slate-200/80 bg-white p-4 sm:flex-row sm:items-center sm:gap-3">
           <span className="shrink-0 text-sm font-medium text-slate-600">Enviar para:</span>
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <select
@@ -165,6 +166,12 @@ export function TemplateList({ templates, leads = [], trainerName = "" }: Props)
               </div>
 
               <div className="flex items-center gap-3">
+                <Link
+                  href={`/templates/${template.id}/edit`}
+                  className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+                >
+                  Editar
+                </Link>
                 <Button
                   type="button"
                   variant="secondary"

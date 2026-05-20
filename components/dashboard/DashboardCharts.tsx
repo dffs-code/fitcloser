@@ -1,8 +1,7 @@
-﻿"use client";
+"use client";
 
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 
 type ChartSeries = {
   month: string;
@@ -17,16 +16,16 @@ type FunnelPoint = {
 
 export function DashboardCharts({ trend, funnel }: { trend: ChartSeries[]; funnel: FunnelPoint[] }) {
   return (
-    <div className="grid gap-6 xl:grid-cols-[1.25fr_0.95fr]">
-      <Card className="min-h-[340px] p-6">
-        <div className="mb-6 flex items-center justify-between gap-4">
+    <div className="grid h-full gap-3 xl:grid-cols-[1.25fr_0.95fr]">
+      <Card className="flex h-full flex-col p-5">
+        <div className="mb-4 shrink-0 flex items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.22em] text-slate-500">Tendência de receita</p>
-            <h2 className="mt-2 text-xl font-semibold text-slate-950">Crescimento em 6 meses</h2>
+            <p className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">Tendência de receita</p>
+            <h2 className="mt-1 text-lg font-semibold text-slate-950">Crescimento em 6 meses</h2>
           </div>
           <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Ao vivo</span>
         </div>
-        <div className="h-72">
+        <div className="min-h-0 flex-1">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trend} margin={{ top: 10, right: 0, left: -16, bottom: 0 }}>
               <defs>
@@ -44,12 +43,12 @@ export function DashboardCharts({ trend, funnel }: { trend: ChartSeries[]; funne
           </ResponsiveContainer>
         </div>
       </Card>
-      <Card className="min-h-[340px] p-6">
-        <div className="mb-6">
-          <p className="text-sm font-medium uppercase tracking-[0.22em] text-slate-500">Funil de conversão</p>
-          <h2 className="mt-2 text-xl font-semibold text-slate-950">Velocidade do pipeline</h2>
+      <Card className="flex h-full flex-col p-5">
+        <div className="mb-4 shrink-0">
+          <p className="text-xs font-medium uppercase tracking-[0.22em] text-slate-500">Funil de conversão</p>
+          <h2 className="mt-1 text-lg font-semibold text-slate-950">Velocidade do pipeline</h2>
         </div>
-        <div className="h-72">
+        <div className="min-h-0 flex-1">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={funnel} margin={{ top: 0, right: 0, left: -16, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 4" stroke="#e2e8f0" vertical={false} />

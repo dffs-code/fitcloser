@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Navigation } from "@/components/Navigation";
+import { AppShell } from "@/components/AppShell";
 import { createServerClient } from "@/lib/supabase-client";
 
 type LeadDetailPageProps = {
@@ -45,10 +45,8 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
     : "Nenhum";
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
-        <Navigation />
-        <div className="mx-auto w-full max-w-6xl space-y-6">
+    <AppShell>
+      <div className="mx-auto w-full max-w-6xl space-y-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Detalhes do lead</p>
@@ -59,12 +57,20 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
                 <span>{lead.goal}</span>
               </div>
             </div>
-            <Link
-              href="/pipeline"
-              className="text-sm font-medium text-brand-600 hover:text-brand-500"
-            >
-              Voltar ao pipeline
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href={`/leads/${id}/edit`}
+                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
+              >
+                Editar lead
+              </Link>
+              <Link
+                href="/pipeline"
+                className="text-sm font-medium text-brand-600 hover:text-brand-500"
+              >
+                Voltar ao pipeline
+              </Link>
+            </div>
           </div>
 
           <div className="grid gap-6 xl:grid-cols-[0.8fr_0.5fr]">
@@ -214,7 +220,6 @@ export default async function LeadDetailPage({ params }: LeadDetailPageProps) {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </AppShell>
   );
 }

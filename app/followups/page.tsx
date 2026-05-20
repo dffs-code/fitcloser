@@ -1,6 +1,6 @@
 ﻿import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-client";
-import { Navigation } from "@/components/Navigation";
+import { AppShell } from "@/components/AppShell";
 import { FollowUpBoard } from "@/components/FollowUpBoard";
 
 export default async function FollowupsPage() {
@@ -23,20 +23,19 @@ export default async function FollowupsPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
-        <Navigation />
-        <div className="space-y-6">
-          <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Lembretes</p>
-            <h1 className="text-3xl font-semibold text-slate-950">Follow-ups</h1>
-          </div>
+    <AppShell>
+      <div className="flex h-full flex-col gap-3">
+        <div className="shrink-0">
+          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Lembretes</p>
+          <h1 className="text-2xl font-semibold text-slate-950">Follow-ups</h1>
+        </div>
+        <div className="min-h-0 flex-1">
           <FollowUpBoard
             initialFollowups={(followupsResult.data ?? []) as any}
             leads={leadsResult.data ?? []}
           />
         </div>
       </div>
-    </div>
+    </AppShell>
   );
 }

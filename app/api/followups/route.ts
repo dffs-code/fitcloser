@@ -54,21 +54,76 @@ export async function POST(request: NextRequest) {
       }
     ]);
 
-    return error
-      ? NextResponse.json({ error: error.message }, { status: 400 })
-      : NextResponse.json({ success: true });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    // Build activity description with lead name if available
+    let activityDescription = `Follow-up agendado: ${note}`;
+    if (leadId) {
+      const { data: lead } = await supabase
+        .from("leads")
+        .select("name")
+        .eq("id", leadId)
+        .single();
+      if (lead?.name) {
+        activityDescription = `Follow-up agendado para ${lead.name}: ${note}`;
+      }
+    }
+
+    await supabase.from("activities").insert([
+      {
+        trainer_id: user.id,
+        lead_id: leadId ?? null,
+        description: activityDescription
+      }
+    ]);
+
+    return NextResponse.json({ success: true });
   }
 
   if (action === "complete" && id) {
+    // Fetch the follow-up first so we can log it
+    const { data: followUp } = await supabase
+      .from("follow_ups")
+      .select("note,lead_id")
+      .eq("id", id)
+      .eq("trainer_id", user.id)
+      .single();
+
     const { error } = await supabase
       .from("follow_ups")
       .update({ completed: true, completed_at: new Date().toISOString() })
       .eq("id", id)
       .eq("trainer_id", user.id);
 
-    return error
-      ? NextResponse.json({ error: error.message }, { status: 400 })
-      : NextResponse.json({ success: true });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    if (followUp) {
+      let activityDescription = `Follow-up concluído: ${followUp.note}`;
+      if (followUp.lead_id) {
+        const { data: lead } = await supabase
+          .from("leads")
+          .select("name")
+          .eq("id", followUp.lead_id)
+          .single();
+        if (lead?.name) {
+          activityDescription = `Follow-up concluído para ${lead.name}: ${followUp.note}`;
+        }
+      }
+
+      await supabase.from("activities").insert([
+        {
+          trainer_id: user.id,
+          lead_id: followUp.lead_id ?? null,
+          description: activityDescription
+        }
+      ]);
+    }
+
+    return NextResponse.json({ success: true });
   }
 
   if (action === "delete" && id) {

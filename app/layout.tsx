@@ -1,5 +1,6 @@
 import { Toaster } from "react-hot-toast";
 import { SupabaseProvider } from "../components/SupabaseProvider";
+import { ThemeProvider } from "../components/ThemeProvider";
 import "./globals.css";
 
 export const metadata = {
@@ -13,8 +14,17 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})();`
+          }}
+        />
+      </head>
       <body>
-        <SupabaseProvider>{children}</SupabaseProvider>
+        <ThemeProvider>
+          <SupabaseProvider>{children}</SupabaseProvider>
+        </ThemeProvider>
         <Toaster
           position="top-right"
           gutter={10}

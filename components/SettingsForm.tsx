@@ -87,7 +87,7 @@ export function SettingsForm({ data }: { data: Partial<SettingsValues> }) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-glow"
+      className="space-y-6 rounded-3xl border border-slate-200/80 bg-white p-6"
     >
       <div>
         <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Configurações</p>

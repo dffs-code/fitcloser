@@ -1,7 +1,7 @@
 ﻿import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-client";
 import { PipelineBoard } from "@/components/pipeline/PipelineBoard";
-import { Navigation } from "@/components/Navigation";
+import { AppShell } from "@/components/AppShell";
 import type { Lead } from "@/types";
 
 export default async function PipelinePage() {
@@ -23,13 +23,8 @@ export default async function PipelinePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
-        <Navigation />
-        <div>
-          <PipelineBoard initialLeads={(leads ?? []) as Lead[]} />
-        </div>
-      </div>
-    </div>
+    <AppShell>
+      <PipelineBoard initialLeads={(leads ?? []) as Lead[]} />
+    </AppShell>
   );
 }

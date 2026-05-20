@@ -1,7 +1,7 @@
 ﻿import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-client";
 import { TemplateList } from "@/components/TemplateList";
-import { Navigation } from "@/components/Navigation";
+import { AppShell } from "@/components/AppShell";
 
 export default async function TemplatesPage() {
   const supabase = await createServerClient();
@@ -28,15 +28,12 @@ export default async function TemplatesPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
-        <Navigation />
-        <TemplateList
+    <AppShell>
+      <TemplateList
           templates={templatesResult.data ?? []}
           leads={leadsResult.data ?? []}
           trainerName={settingsResult.data?.business_name ?? ""}
         />
-      </div>
-    </div>
+    </AppShell>
   );
 }
