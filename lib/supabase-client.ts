@@ -4,12 +4,12 @@ import { createServerClient as createServerClientFromAuthHelpers } from "@supaba
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-export const createServerClient = () => {
+export const createServerClient = async () => {
   if (!supabaseUrl || !supabaseKey) {
     throw new Error("Missing Supabase environment variables for server-side client.");
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   return createServerClientFromAuthHelpers(supabaseUrl, supabaseKey, {
     cookies: {

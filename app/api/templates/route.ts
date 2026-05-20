@@ -13,37 +13,24 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { leadId, title, plan, frequency, duration_weeks, price, observations, payment_conditions } = body;
+  const { category, title, template_body } = body;
 
-  const token = crypto.randomUUID();
+  if (!category || !title || !template_body) {
+    return NextResponse.json({ error: "category, title e body são obrigatórios." }, { status: 400 });
+  }
 
-  const { error } = await supabase.from("proposals").insert([
+  const { error } = await supabase.from("message_templates").insert([
     {
       trainer_id: user.id,
-      lead_id: leadId,
+      category,
       title,
-      plan,
-      frequency,
-      duration_weeks: Number(duration_weeks),
-      price: Number(price),
-      observations,
-      payment_conditions,
-      status: "draft",
-      token
+      body: template_body
     }
   ]);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
-
-  supabase.from("activities").insert([
-    {
-      trainer_id: user.id,
-      lead_id: leadId ?? null,
-      description: `Proposta criada: ${title}`
-    }
-  ]);
 
   return NextResponse.json({ success: true });
 }

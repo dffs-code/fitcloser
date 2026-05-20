@@ -1,32 +1,41 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-client";
 import { TemplateList } from "@/components/TemplateList";
 import { Navigation } from "@/components/Navigation";
 
 export default async function TemplatesPage() {
-  const supabase = createServerClient();
-  const sessionResponse = await supabase.auth.getSession();
-  const session = sessionResponse.data.session;
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session) redirect("/login");
+  if (!user) redirect("/login");
 
-  const { data: templates } = await supabase
-    .from("message_templates")
-    .select("id,category,title,body")
-    .eq("trainer_id", session.user.id)
-    .order("created_at", { ascending: false });
+  const [templatesResult, leadsResult, settingsResult] = await Promise.all([
+    supabase
+      .from("message_templates")
+      .select("id,category,title,body")
+      .eq("trainer_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("leads")
+      .select("id,name,email,phone,age,goal,source")
+      .eq("trainer_id", user.id)
+      .order("name", { ascending: true }),
+    supabase
+      .from("business_settings")
+      .select("business_name")
+      .eq("trainer_id", user.id)
+      .single()
+  ]);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
         <Navigation />
-        <div className="space-y-6">
-          <div>
-            <p className="text-sm uppercase tracking-[0.22em] text-slate-500 dark:text-slate-400">Modelos de mensagem</p>
-            <h1 className="text-3xl font-semibold text-slate-950 dark:text-white">Mensagens prontas para WhatsApp</h1>
-          </div>
-          <TemplateList templates={templates ?? []} />
-        </div>
+        <TemplateList
+          templates={templatesResult.data ?? []}
+          leads={leadsResult.data ?? []}
+          trainerName={settingsResult.data?.business_name ?? ""}
+        />
       </div>
     </div>
   );

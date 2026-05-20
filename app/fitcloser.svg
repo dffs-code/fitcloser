@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Ícone de braço segurando haltere com gradiente horizontal ajustado">
+  <defs>
+    <style>
+      .bg { fill: #f8fbff; }
+      .stroke { stroke: #0f172a; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+
+    <!-- Gradiente principal: da esquerda (claro) para a direita (escuro).
+         A parte escura começa aproximadamente na dobra entre braço e bíceps (cerca de 50-55%). -->
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(59,130,246,0.12)"/>
+      <stop offset="45%" stop-color="rgba(59,130,246,0.12)"/>
+      <stop offset="50%" stop-color="rgba(59,130,246,0.18)"/>
+      <stop offset="55%" stop-color="rgba(59,130,246,0.24)"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <!-- Gradiente de destaque com transição mais concentrada perto da dobra -->
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(59,130,246,0.12)"/>
+      <stop offset="48%" stop-color="rgba(59,130,246,0.14)"/>
+      <stop offset="60%" stop-color="rgba(59,130,246,0.24)"/>
+    </linearGradient>
+
+    <!-- Halo suave -->
+    <radialGradient id="halo" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="rgba(59,130,246,0.12)"/>
+      <stop offset="100%" stop-color="rgba(59,130,246,0)"/>
+    </radialGradient>
+
+    <!-- Sombra suave -->
+    <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="18" stdDeviation="28" flood-color="rgba(59,130,246,0.24)"/>
+    </filter>
+  </defs>
+
+  <!-- Fundo -->
+  <rect class="bg" width="100%" height="100%" rx="0" ry="0"/>
+
+  <!-- Halo atrás do ícone -->
+  <g transform="translate(512,360)">
+    <circle r="260" fill="url(#halo)"/>
+  </g>
+
+  <!-- Grupo com paths originais, preenchidos com o gradiente horizontal ajustado -->
+  <g transform="translate(0,1024) scale(0.1,-0.1)" filter="url(#softShadow)">
+
+    <!-- Path principal (braço/antebraço) -->
+    <path d="M2039 8256 c-82 -29 -161 -99 -216 -193 -71 -121 -128 -357 -141
+-582 -22 -358 29 -679 140 -893 46 -89 95 -143 165 -185 l48 -28 331 -3 c318
+-3 333 -2 388 19 114 42 216 179 280 374 24 75 65 244 66 273 0 9 -27 12 -100
+12 -55 0 -100 -3 -100 -6 0 -31 -46 -220 -67 -272 -55 -140 -134 -222 -213
+-222 -77 0 -150 47 -196 126 -35 59 -81 199 -100 303 -22 116 -30 446 -14 565
+29 217 82 373 156 455 85 94 171 103 254 25 80 -74 125 -178 165 -378 l22
+-111 97 -3 97 -3 -6 48 c-4 26 -17 95 -30 153 -65 293 -186 480 -342 525 -69
+20 -628 21 -684 1z"
+      fill="url(#mainGrad)" stroke="#0f172a" stroke-width="40" />
+
+    <!-- Path secundário (forma complexa) -->
+    <path d="M5862 8251 c-136 -47 -233 -194 -297 -446 -20 -79 -28 -126 -51 -322
+l-5 -43 -257 0 -257 0 -49 198 c-76 305 -100 365 -173 426 -46 39 -98 57 -178
+63 -94 7 -153 -7 -299 -74 -96 -44 -139 -57 -220 -69 -56 -9 -144 -22 -196
+-30 -224 -34 -335 -140 -425 -405 l-34 -104 -400 -5 c-385 -5 -401 -6 -428
+-26 -40 -30 -58 -89 -41 -139 7 -21 26 -48 41 -59 27 -20 41 -21 398 -24 203
+-2 369 -6 369 -11 0 -4 -16 -68 -34 -142 -112 -436 -215 -1137 -246 -1679 -32
+-572 10 -975 145 -1390 60 -183 117 -320 260 -625 65 -137 144 -308 177 -380
+67 -145 110 -210 165 -248 112 -77 246 -108 383 -89 99 14 174 49 242 111 l53
+48 120 -5 c191 -7 512 19 779 63 568 95 1170 334 1671 662 142 93 213 144 380
+272 90 70 130 93 228 132 388 157 656 436 763 794 24 80 27 107 28 245 1 122
+-3 171 -18 230 -117 460 -507 824 -1001 935 -108 24 -368 30 -493 11 -335 -51
+-630 -235 -811 -506 -34 -50 -61 -95 -61 -99 0 -5 33 -14 73 -20 218 -35 531
+-166 629 -263 63 -63 48 -135 -31 -145 -35 -5 -50 1 -118 40 -253 148 -529
+217 -812 204 -322 -15 -599 -156 -774 -392 -32 -44 -62 -84 -66 -88 -5 -5 -54
+67 -109 160 -56 92 -151 245 -211 338 -210 325 -301 474 -322 527 -64 160 -63
+390 0 559 39 104 71 137 262 274 163 117 299 273 368 423 l24 52 253 0 253 0
+6 -57 c34 -333 105 -550 216 -664 90 -92 96 -94 467 -97 395 -4 392 -4 497
+102 110 112 182 287 222 539 27 170 25 513 -5 667 -56 297 -162 489 -309 558
+l-58 27 -315 2 c-285 3 -320 1 -368 -16z m643 -190 c145 -66 235 -349 235
+-741 0 -266 -36 -464 -111 -618 -58 -119 -124 -163 -221 -147 -53 9 -121 71
+-158 145 -74 146 -110 351 -110 623 0 268 34 449 111 597 46 88 81 126 135
+145 52 19 71 18 119 -4z"
+      fill="url(#mainGrad)" stroke="#0f172a" stroke-width="40" />
+
+    <!-- Path de detalhe menor com gradiente de destaque -->
+    <path d="M6410 7458 c-58 -30 -83 -73 -83 -145 0 -39 6 -62 20 -81 74 -101
+216 -96 271 9 56 106 -19 239 -136 239 -15 0 -48 -10 -72 -22z"
+      fill="url(#accentGrad)" stroke="#0f172a" stroke-width="30" />
+
+    <!-- Pequenos realces em cor clara -->
+    <g fill="none" stroke="#f8fbff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1200 1700 c180 -60 360 -60 540 0"/>
+      <path d="M7600 1700 c180 -60 360 -60 540 0"/>
+    </g>
+
+  </g>
+
+  <!-- Sombra de superfície -->
+  <ellipse cx="512" cy="820" rx="220" ry="40" fill="rgba(59,130,246,0.06)"/>
+
+</svg>

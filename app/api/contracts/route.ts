@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createServerClient } from "@/lib/supabase-client";
 
 export async function POST(request: NextRequest) {
-  const supabase = createRouteHandlerClient({ cookies });
-  const { data: { session } } = await supabase.auth.getSession();
+  const supabase = await createServerClient();
+  const {
+    data: { user },
+    error: authError
+  } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user || authError) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -15,7 +17,7 @@ export async function POST(request: NextRequest) {
 
   const { error } = await supabase.from("contracts").insert([
     {
-      trainer_id: session.user.id,
+      trainer_id: user.id,
       lead_id: leadId,
       title,
       template,
@@ -27,6 +29,14 @@ export async function POST(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
+
+  supabase.from("activities").insert([
+    {
+      trainer_id: user.id,
+      lead_id: leadId ?? null,
+      description: `Contrato criado: ${title}`
+    }
+  ]);
 
   return NextResponse.json({ success: true });
 }

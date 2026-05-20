@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { Card } from "@/components/ui/card";
@@ -22,9 +22,9 @@ export function DashboardCharts({ trend, funnel }: { trend: ChartSeries[]; funne
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-medium uppercase tracking-[0.22em] text-slate-500">Tendência de receita</p>
-            <h2 className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">Crescimento em 6 meses</h2>
+            <h2 className="mt-2 text-xl font-semibold text-slate-950">Crescimento em 6 meses</h2>
           </div>
-          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200">Ao vivo</span>
+          <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700">Ao vivo</span>
         </div>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
@@ -47,7 +47,7 @@ export function DashboardCharts({ trend, funnel }: { trend: ChartSeries[]; funne
       <Card className="min-h-[340px] p-6">
         <div className="mb-6">
           <p className="text-sm font-medium uppercase tracking-[0.22em] text-slate-500">Funil de conversão</p>
-          <h2 className="mt-2 text-xl font-semibold text-slate-950 dark:text-white">Velocidade do pipeline</h2>
+          <h2 className="mt-2 text-xl font-semibold text-slate-950">Velocidade do pipeline</h2>
         </div>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">

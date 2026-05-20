@@ -25,18 +25,10 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
 
     let mounted = true;
 
-    const initializeSession = async () => {
-      const { data } = await supabaseClient.auth.getSession();
-      if (!mounted) return;
-      setSession(data.session);
-      setIsLoading(false);
-    };
-
-    initializeSession();
-
     const { data: authListener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
       setSession(session);
+      setIsLoading(false);
     });
 
     return () => {

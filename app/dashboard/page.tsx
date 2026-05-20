@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+﻿import { redirect } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DashboardCharts } from "@/components/dashboard/DashboardCharts";
@@ -16,18 +16,17 @@ const statusLabels = [
 ];
 
 export default async function DashboardPage() {
-  const supabase = createServerClient();
-  const sessionResponse = await supabase.auth.getSession();
-  const session = sessionResponse.data.session;
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session) {
+  if (!user) {
     redirect("/login");
   }
 
-  const userId = session.user.id;
+  const userId = user.id;
   const now = new Date();
   const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-  const thirtyDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 30);
+
 
   const [leadCount, activeClientsCount, followUpsCount, proposals, leads, activities] = await Promise.all([
     supabase.from("leads").select("id", { count: "exact", head: true }).eq("trainer_id", userId),
@@ -73,34 +72,34 @@ export default async function DashboardPage() {
   const recentActivity = activities.data ?? [];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-slate-50">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 xl:grid-cols-[18rem_1fr] px-6 py-8 sm:px-10">
         <Navigation />
         <div className="space-y-6">
           <div className="space-y-6">
-            <div className="rounded-4xl border border-slate-200/80 bg-white/95 p-6 shadow-glow dark:border-slate-800 dark:bg-slate-950/90">
-              <p className="text-sm uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400">Seu painel</p>
-              <h1 className="mt-3 text-3xl font-semibold text-slate-950 dark:text-white">Pontuação rápida do pipeline</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">
+            <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-6 shadow-glow">
+              <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Seu painel</p>
+              <h1 className="mt-3 text-3xl font-semibold text-slate-950">Pontuação rápida do pipeline</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
                 Visão geral de clientes ativos, receita e follow-ups no seu processo de vendas.
               </p>
             </div>
             <div className="grid gap-4 xl:grid-cols-2">
               <Card>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Leads totais</p>
-                <p className="mt-4 text-4xl font-semibold text-slate-950 dark:text-white">{totalLeads}</p>
+                <p className="text-sm text-slate-500">Leads totais</p>
+                <p className="mt-4 text-4xl font-semibold text-slate-950">{totalLeads}</p>
               </Card>
               <Card>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Clientes ativos</p>
-                <p className="mt-4 text-4xl font-semibold text-slate-950 dark:text-white">{activeClients}</p>
+                <p className="text-sm text-slate-500">Clientes ativos</p>
+                <p className="mt-4 text-4xl font-semibold text-slate-950">{activeClients}</p>
               </Card>
               <Card>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Follow-ups pendentes</p>
-                <p className="mt-4 text-4xl font-semibold text-slate-950 dark:text-white">{pendingFollowUps}</p>
+                <p className="text-sm text-slate-500">Follow-ups pendentes</p>
+                <p className="mt-4 text-4xl font-semibold text-slate-950">{pendingFollowUps}</p>
               </Card>
               <Card>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Receita últimos 6 meses</p>
-                <p className="mt-4 text-4xl font-semibold text-slate-950 dark:text-white">R$ {monthlyRevenue.toLocaleString("pt-BR")}</p>
+                <p className="text-sm text-slate-500">Receita últimos 6 meses</p>
+                <p className="mt-4 text-4xl font-semibold text-slate-950">R$ {monthlyRevenue.toLocaleString("pt-BR")}</p>
               </Card>
             </div>
           </div>
@@ -108,19 +107,19 @@ export default async function DashboardPage() {
           <Card className="p-6">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Atividade recente</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Últimas atualizações de leads e propostas.</p>
+                <h2 className="text-xl font-semibold text-slate-950">Atividade recente</h2>
+                <p className="text-sm text-slate-500">Últimas atualizações de leads e propostas.</p>
               </div>
               <Badge variant="accent">Feed ao vivo</Badge>
             </div>
             <div className="space-y-4">
               {recentActivity.length === 0 ? (
-                <p className="text-sm text-slate-600 dark:text-slate-400">Ainda sem atividade. Adicione leads para ativar seu pipeline.</p>
+                <p className="text-sm text-slate-600">Ainda sem atividade. Adicione leads para ativar seu pipeline.</p>
               ) : (
                 recentActivity.map((item) => (
-                  <div key={item.id} className="rounded-3xl border border-slate-200/80 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-900/70">
-                    <p className="text-sm text-slate-700 dark:text-slate-200">{item.description}</p>
-                    <p className="mt-2 text-xs uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500">{new Date(item.created_at).toLocaleString("pt-BR")}</p>
+                  <div key={item.id} className="rounded-3xl border border-slate-200/80 bg-slate-50 p-4">
+                    <p className="text-sm text-slate-700">{item.description}</p>
+                    <p className="mt-2 text-xs uppercase tracking-[0.24em] text-slate-400">{new Date(item.created_at).toLocaleString("pt-BR")}</p>
                   </div>
                 ))
               )}
