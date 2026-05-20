@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 const stats = [
   { value: "1.200+", label: "Treinadores ativos" },
@@ -149,13 +148,70 @@ export default function HomePage() {
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden px-6 pb-24 pt-20 sm:px-10 sm:pb-32 sm:pt-28">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 -top-40 flex justify-center"
-        >
-          <div className="h-[500px] w-[900px] rounded-full bg-brand-500/10 blur-3xl" />
+
+        {/* Background layer stack */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+
+          {/* Dot grid — fades radially from top */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: "radial-gradient(circle, rgba(60,93,255,0.13) 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+              WebkitMaskImage: "radial-gradient(ellipse 90% 65% at 50% 0%, black 20%, transparent 100%)",
+              maskImage: "radial-gradient(ellipse 90% 65% at 50% 0%, black 20%, transparent 100%)",
+            }}
+          />
+
+          {/* Primary glow blob — top center */}
+          <div className="absolute -top-32 left-1/2 h-[560px] w-[900px] -translate-x-1/2 rounded-full bg-brand-500/[0.09] blur-3xl" />
+          {/* Secondary blob — upper right */}
+          <div className="absolute -right-24 -top-24 h-[420px] w-[420px] rounded-full bg-violet-400/[0.07] blur-3xl" />
+          {/* Tertiary blob — left center */}
+          <div className="absolute -left-32 top-[35%] h-[320px] w-[320px] rounded-full bg-sky-400/[0.07] blur-3xl" />
+
+          {/* Orbital radar rings — large, top-right, partially cropped */}
+          <svg
+            className="absolute -right-28 -top-20 h-[620px] w-[620px] text-brand-600"
+            viewBox="0 0 620 620"
+            fill="none"
+          >
+            <circle cx="310" cy="310" r="300" stroke="currentColor" strokeWidth="1" strokeOpacity="0.07" strokeDasharray="8 5" />
+            <circle cx="310" cy="310" r="225" stroke="currentColor" strokeWidth="1" strokeOpacity="0.06" />
+            <circle cx="310" cy="310" r="155" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.07" fill="currentColor" fillOpacity="0.025" />
+            <circle cx="310" cy="310" r="55"  stroke="currentColor" strokeWidth="1"   strokeOpacity="0.08" fill="currentColor" fillOpacity="0.04" />
+            {/* Cross-hairs */}
+            <line x1="310" y1="5"   x2="310" y2="615" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.05" strokeDasharray="5 5" />
+            <line x1="5"   y1="310" x2="615" y2="310" stroke="currentColor" strokeWidth="0.5" strokeOpacity="0.05" strokeDasharray="5 5" />
+          </svg>
+
+          {/* Smaller orbit — bottom left */}
+          <svg
+            className="absolute -left-16 bottom-[5%] h-[280px] w-[280px] text-brand-600"
+            viewBox="0 0 280 280"
+            fill="none"
+          >
+            <circle cx="140" cy="140" r="135" stroke="currentColor" strokeWidth="1" strokeOpacity="0.05" strokeDasharray="6 4" />
+            <circle cx="140" cy="140" r="88"  stroke="currentColor" strokeWidth="1" strokeOpacity="0.05" />
+            <circle cx="140" cy="140" r="42"  stroke="currentColor" strokeWidth="1" strokeOpacity="0.06" fill="currentColor" fillOpacity="0.02" />
+          </svg>
+
+          {/* Floating accent squares */}
+          <div className="absolute left-[5%] top-[18%] h-14 w-14 rotate-[32deg] rounded-2xl border border-brand-400/20 bg-brand-50/40" />
+          <div className="absolute left-[22%] top-[8%]  h-6  w-6  rotate-[18deg] rounded-lg  border border-brand-300/20 bg-brand-50/30" />
+          <div className="absolute right-[5%] bottom-[18%] h-10 w-10 rotate-[-24deg] rounded-xl border border-violet-400/15 bg-violet-50/20" />
+          <div className="absolute right-[20%] top-[5%] h-4 w-4 rotate-[10deg] rounded-md border border-brand-300/25" />
+
+          {/* Floating dots */}
+          <div className="absolute left-[12%] top-[42%] h-3 w-3 rounded-full bg-brand-500/25" />
+          <div className="absolute left-[38%] top-[6%]  h-2 w-2 rounded-full bg-brand-400/35" />
+          <div className="absolute right-[14%] top-[28%] h-2.5 w-2.5 rounded-full bg-violet-400/30" />
+
+          {/* Bottom fade to white */}
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-white to-transparent" />
         </div>
 
+        {/* Content */}
         <div className="relative mx-auto max-w-6xl">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-700">
@@ -191,9 +247,9 @@ export default function HomePage() {
             <p className="mt-4 text-xs text-slate-400">Sem cartão de crédito. Comece em 60 segundos.</p>
           </div>
 
-          {/* Mock dashboard card */}
-          <div className="mt-16 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-slate-200">
-            <div className="border-b border-slate-100 bg-slate-50 px-6 py-3 flex items-center gap-2">
+          {/* Mock dashboard */}
+          <div className="mt-16 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-2xl shadow-brand-900/10 ring-1 ring-slate-100">
+            <div className="flex items-center gap-2 border-b border-slate-100 bg-slate-50/80 px-6 py-3">
               <span className="h-3 w-3 rounded-full bg-red-400" />
               <span className="h-3 w-3 rounded-full bg-amber-400" />
               <span className="h-3 w-3 rounded-full bg-emerald-400" />
@@ -201,12 +257,12 @@ export default function HomePage() {
             </div>
             <div className="grid gap-4 p-6 sm:grid-cols-4">
               {[
-                { label: "Leads totais", value: "48", color: "text-brand-600" },
-                { label: "Clientes ativos", value: "19", color: "text-emerald-600" },
-                { label: "Follow-ups hoje", value: "5", color: "text-amber-600" },
-                { label: "Receita / mês", value: "R$ 9.800", color: "text-slate-900" },
+                { label: "Leads totais",    value: "48",      color: "text-brand-600",   bg: "from-brand-50 to-brand-50/30" },
+                { label: "Clientes ativos", value: "19",      color: "text-emerald-600", bg: "from-emerald-50 to-emerald-50/30" },
+                { label: "Follow-ups hoje", value: "5",       color: "text-amber-600",   bg: "from-amber-50 to-amber-50/30" },
+                { label: "Receita / mês",   value: "R$ 9.800",color: "text-slate-900",   bg: "from-slate-50 to-slate-50/30" },
               ].map((s) => (
-                <div key={s.label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                <div key={s.label} className={`rounded-2xl border border-slate-100 bg-gradient-to-br ${s.bg} p-4`}>
                   <p className="text-xs text-slate-500">{s.label}</p>
                   <p className={`mt-2 text-2xl font-bold ${s.color}`}>{s.value}</p>
                 </div>
@@ -214,11 +270,11 @@ export default function HomePage() {
             </div>
             <div className="grid gap-3 px-6 pb-6 sm:grid-cols-3">
               {[
-                { name: "João Silva", stage: "Proposta enviada", badge: "Quente", color: "bg-amber-100 text-amber-700" },
-                { name: "Mariana Luz", stage: "Negociação", badge: "Ativo", color: "bg-brand-100 text-brand-700" },
-                { name: "Rafael Torres", stage: "Fechado ganho ✓", badge: "Ganho", color: "bg-emerald-100 text-emerald-700" },
+                { name: "João Silva",    stage: "Proposta enviada",  badge: "Quente",  color: "bg-amber-100 text-amber-700" },
+                { name: "Mariana Luz",   stage: "Negociação",         badge: "Ativo",   color: "bg-brand-100 text-brand-700" },
+                { name: "Rafael Torres", stage: "Fechado ganho ✓",   badge: "Ganho",   color: "bg-emerald-100 text-emerald-700" },
               ].map((l) => (
-                <div key={l.name} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                <div key={l.name} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
                   <div>
                     <p className="text-sm font-semibold text-slate-900">{l.name}</p>
                     <p className="text-xs text-slate-500">{l.stage}</p>
@@ -234,19 +290,24 @@ export default function HomePage() {
       </section>
 
       {/* ── STATS ───────────────────────────────────────────────────────── */}
-      <section className="border-y border-slate-100 bg-slate-50 px-6 py-12 sm:px-10">
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-8 sm:grid-cols-4">
+      <section className="relative border-y border-slate-100 bg-white px-6 py-14 sm:px-10">
+        {/* Thin brand accent line at top */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-400/40 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-brand-400/20 to-transparent" />
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-10 sm:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="text-center">
-              <p className="text-3xl font-extrabold text-slate-950">{s.value}</p>
-              <p className="mt-1 text-sm text-slate-500">{s.label}</p>
+              <p className="bg-gradient-to-br from-brand-600 to-brand-400 bg-clip-text text-3xl font-extrabold text-transparent">
+                {s.value}
+              </p>
+              <p className="mt-1.5 text-sm text-slate-500">{s.label}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── PAIN POINTS ─────────────────────────────────────────────────── */}
-      <section className="px-6 py-24 sm:px-10">
+      <section className="relative px-6 py-24 sm:px-10">
         <div className="mx-auto max-w-5xl">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -254,7 +315,7 @@ export default function HomePage() {
               <h2 className="mt-3 text-4xl font-extrabold leading-tight text-slate-950">
                 Todo treinador perde dinheiro sem perceber.
               </h2>
-              <p className="mt-4 text-slate-600 leading-7">
+              <p className="mt-4 leading-7 text-slate-600">
                 Não é falta de talento. É falta de processo. Um lead esquecido aqui, uma proposta que nunca saiu ali — e no fim do mês a agenda não tá cheia.
               </p>
               <ul className="mt-8 space-y-4">
@@ -270,25 +331,43 @@ export default function HomePage() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-[2rem] border border-slate-200 bg-gradient-to-br from-brand-600 to-brand-500 p-8 text-white shadow-xl shadow-brand-500/20">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/70">Com o FitCloser</p>
-              <h3 className="mt-3 text-2xl font-bold leading-snug">
-                Cada lead tem um próximo passo. Cada proposta tem um status. Cada cliente tem um contrato.
-              </h3>
-              <p className="mt-4 text-sm leading-7 text-white/80">
-                Chega de perder tempo e dinheiro com desorganização. Você é personal trainer — não secretário. Deixa o FitCloser cuidar do processo de vendas.
-              </p>
-              <div className="mt-8 space-y-3">
-                {["Pipeline organizado", "Propostas aceitas digitalmente", "Contratos assinados", "Follow-ups no prazo"].map((item) => (
-                  <div key={item} className="flex items-center gap-3">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20">
-                      <svg className="h-3 w-3" viewBox="0 0 12 10" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="1 5 4 8 11 1" />
-                      </svg>
-                    </span>
-                    <span className="text-sm text-white/90">{item}</span>
-                  </div>
-                ))}
+
+            {/* Solution card with inner decoration */}
+            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-600 to-brand-500 p-8 text-white shadow-xl shadow-brand-500/25">
+              {/* Inner decorative circles */}
+              <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" />
+              <div aria-hidden className="pointer-events-none absolute -right-8  -top-8  h-36 w-36 rounded-full bg-white/8" />
+              <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-20 h-60 w-60 rounded-full bg-black/10" />
+              {/* Dot grid overlay */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 opacity-[0.08]"
+                style={{
+                  backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+                  backgroundSize: "20px 20px",
+                }}
+              />
+              {/* Content */}
+              <div className="relative">
+                <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/70">Com o FitCloser</p>
+                <h3 className="mt-3 text-2xl font-bold leading-snug">
+                  Cada lead tem um próximo passo. Cada proposta tem um status. Cada cliente tem um contrato.
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-white/80">
+                  Chega de perder tempo e dinheiro com desorganização. Você é personal trainer — não secretário. Deixa o FitCloser cuidar do processo de vendas.
+                </p>
+                <div className="mt-8 space-y-3">
+                  {["Pipeline organizado", "Propostas aceitas digitalmente", "Contratos assinados", "Follow-ups no prazo"].map((item) => (
+                    <div key={item} className="flex items-center gap-3">
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20">
+                        <svg className="h-3 w-3" viewBox="0 0 12 10" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="1 5 4 8 11 1" />
+                        </svg>
+                      </span>
+                      <span className="text-sm text-white/90">{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -296,8 +375,21 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURES ────────────────────────────────────────────────────── */}
-      <section className="bg-slate-50 px-6 py-24 sm:px-10">
-        <div className="mx-auto max-w-6xl">
+      <section className="relative overflow-hidden bg-slate-50 px-6 py-24 sm:px-10">
+        {/* Subtle dot grid on the section */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.018]"
+          style={{
+            backgroundImage: "radial-gradient(circle, #0f172a 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        {/* Corner accents */}
+        <div aria-hidden className="pointer-events-none absolute -left-24 top-1/2 h-64 w-64 rounded-full bg-brand-400/5 blur-2xl" />
+        <div aria-hidden className="pointer-events-none absolute -right-24 top-1/4 h-64 w-64 rounded-full bg-violet-400/5 blur-2xl" />
+
+        <div className="relative mx-auto max-w-6xl">
           <div className="text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-600">Tudo que você precisa</p>
             <h2 className="mt-3 text-4xl font-extrabold text-slate-950">
@@ -309,8 +401,11 @@ export default function HomePage() {
           </div>
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
-              <div key={f.title} className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md hover:-translate-y-0.5">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-600">
+              <div
+                key={f.title}
+                className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-brand-200 hover:shadow-md hover:shadow-brand-500/8"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-100">
                   {f.icon}
                 </div>
                 <h3 className="mt-4 text-lg font-bold text-slate-950">{f.title}</h3>
@@ -332,10 +427,16 @@ export default function HomePage() {
             {steps.map((step, i) => (
               <div key={step.number} className="relative">
                 {i < steps.length - 1 && (
-                  <div aria-hidden className="absolute right-0 top-6 hidden h-px w-1/2 border-t-2 border-dashed border-slate-200 sm:block" style={{ left: "calc(50% + 2rem)" }} />
+                  <div
+                    aria-hidden
+                    className="absolute right-0 top-6 hidden h-px w-1/2 border-t-2 border-dashed border-brand-200 sm:block"
+                    style={{ left: "calc(50% + 2rem)" }}
+                  />
                 )}
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30">
+                <div className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 text-sm font-extrabold text-white shadow-lg shadow-brand-500/30">
                   {step.number}
+                  {/* Glow ring on step number */}
+                  <div className="absolute inset-0 rounded-2xl ring-4 ring-brand-500/15" />
                 </div>
                 <h3 className="mt-5 text-xl font-bold text-slate-950">{step.title}</h3>
                 <p className="mt-2 text-sm leading-7 text-slate-600">{step.description}</p>
@@ -346,8 +447,17 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ────────────────────────────────────────────────── */}
-      <section className="bg-slate-50 px-6 py-24 sm:px-10">
-        <div className="mx-auto max-w-6xl">
+      <section className="relative overflow-hidden bg-slate-50 px-6 py-24 sm:px-10">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.018]"
+          style={{
+            backgroundImage: "radial-gradient(circle, #0f172a 1px, transparent 1px)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-300/30 to-transparent" />
+        <div className="relative mx-auto max-w-6xl">
           <div className="text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-600">Resultados reais</p>
             <h2 className="mt-3 text-4xl font-extrabold text-slate-950">O que treinadores falam.</h2>
@@ -355,7 +465,7 @@ export default function HomePage() {
           <div className="mt-14 grid gap-6 sm:grid-cols-3">
             {testimonials.map((t) => (
               <div key={t.name} className="flex flex-col rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
-                <svg className="h-6 w-6 text-brand-400" viewBox="0 0 24 24" fill="currentColor">
+                <svg className="h-6 w-6 text-brand-300" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M11.192 15.757c0-.88-.23-1.618-.69-2.217-.326-.412-.768-.683-1.327-.812-.55-.128-1.07-.137-1.54-.028-.16-.95.077-1.928.605-2.95.527-1.023 1.306-1.956 2.336-2.8l-1.696-1.75C7.028 6.192 6 7.42 5.236 8.83c-.764 1.41-1.146 2.83-1.146 4.26 0 1.757.515 3.14 1.546 4.148 1.03 1.01 2.274 1.515 3.73 1.515 1.346 0 2.44-.44 3.284-1.32.842-.88 1.263-1.99 1.263-3.33l-.72.654zm9.608 0c0-.88-.23-1.618-.69-2.217-.326-.42-.77-.692-1.327-.82-.55-.128-1.07-.136-1.54-.028-.16-.95.077-1.928.605-2.95.527-1.022 1.306-1.956 2.336-2.8l-1.696-1.75c-1.85 1.192-2.878 2.42-3.642 3.83-.764 1.41-1.146 2.83-1.146 4.26 0 1.758.515 3.14 1.546 4.15 1.03 1.01 2.274 1.514 3.73 1.514 1.346 0 2.44-.44 3.284-1.32.842-.88 1.263-1.99 1.263-3.33l-.723.66z" />
                 </svg>
                 <p className="mt-4 flex-1 text-sm leading-7 text-slate-700">{t.quote}</p>
@@ -376,27 +486,58 @@ export default function HomePage() {
 
       {/* ── FINAL CTA ───────────────────────────────────────────────────── */}
       <section className="px-6 py-24 sm:px-10">
-        <div className="mx-auto max-w-3xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-600 to-brand-500 p-12 text-center shadow-2xl shadow-brand-500/30">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/70">Pronto para crescer?</p>
-          <h2 className="mt-3 text-4xl font-extrabold text-white">
-            Seu próximo aluno está esperando uma resposta sua.
-          </h2>
-          <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-white/80">
-            Junte-se a mais de 1.200 treinadores que pararam de perder leads e começaram a fechar mais — com muito menos esforço.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link href="/login">
-              <button className="rounded-full bg-white px-8 py-3.5 text-base font-bold text-brand-600 shadow-lg transition hover:bg-brand-50">
-                Criar conta grátis
-              </button>
-            </Link>
-            <Link href="/dashboard">
-              <button className="rounded-full border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10">
-                Ver o painel →
-              </button>
-            </Link>
+        <div className="relative mx-auto max-w-3xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-600 to-brand-500 p-12 text-center shadow-2xl shadow-brand-500/30">
+
+          {/* Inner decorations */}
+          <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10" />
+          <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-44 w-44 rounded-full bg-white/8" />
+          <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-black/10" />
+          <div aria-hidden className="pointer-events-none absolute bottom-8 left-8 h-20 w-20 rounded-full bg-white/5" />
+
+          {/* Dot grid overlay */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)",
+              backgroundSize: "20px 20px",
+            }}
+          />
+
+          {/* Decorative ring at top-right */}
+          <svg
+            aria-hidden
+            className="pointer-events-none absolute right-0 top-0 h-48 w-48 text-white/10"
+            viewBox="0 0 200 200"
+            fill="none"
+          >
+            <circle cx="200" cy="0" r="100" stroke="currentColor" strokeWidth="1" strokeDasharray="6 4" />
+            <circle cx="200" cy="0" r="65"  stroke="currentColor" strokeWidth="1" />
+          </svg>
+
+          {/* Content */}
+          <div className="relative">
+            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-white/70">Pronto para crescer?</p>
+            <h2 className="mt-3 text-4xl font-extrabold text-white">
+              Seu próximo aluno está esperando uma resposta sua.
+            </h2>
+            <p className="mx-auto mt-4 max-w-lg text-base leading-7 text-white/80">
+              Junte-se a mais de 1.200 treinadores que pararam de perder leads e começaram a fechar mais — com muito menos esforço.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Link href="/login">
+                <button className="rounded-full bg-white px-8 py-3.5 text-base font-bold text-brand-600 shadow-lg transition hover:bg-brand-50">
+                  Criar conta grátis
+                </button>
+              </Link>
+              <Link href="/dashboard">
+                <button className="rounded-full border border-white/30 px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10">
+                  Ver o painel →
+                </button>
+              </Link>
+            </div>
+            <p className="mt-5 text-xs text-white/50">Sem cartão de crédito · Cancele quando quiser</p>
           </div>
-          <p className="mt-5 text-xs text-white/50">Sem cartão de crédito · Cancele quando quiser</p>
         </div>
       </section>
 

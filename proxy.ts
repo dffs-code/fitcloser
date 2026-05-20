@@ -23,7 +23,7 @@ function hasSession(request: NextRequest): boolean {
   return !!(request.cookies.get(base)?.value ?? request.cookies.get(`${base}.0`)?.value);
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const session = hasSession(request);
 

@@ -2,9 +2,7 @@ import path from "path";
 
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    typedRoutes: true
-  },
+  typedRoutes: true,
   images: {
     remotePatterns: [
       {
