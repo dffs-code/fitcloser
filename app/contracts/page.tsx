@@ -38,23 +38,23 @@ export default async function ContractsPage() {
               </Card>
             ) : (
               (contracts ?? []).map((contract: any) => (
-                <Card key={contract.id} className="flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm uppercase tracking-[0.22em] text-slate-500">{contract.title}</p>
-                    <h2 className="mt-2 text-lg font-semibold text-slate-950">{contract.title}</h2>
-                    <p className="mt-1 text-sm text-slate-600">Vence {contract.expires_at ? new Date(contract.expires_at).toLocaleDateString("pt-BR") : "Nunca"}</p>
-                  </div>
-                  <div className="flex flex-col items-start gap-3 sm:items-end">
-                    <Badge variant={contract.status === "signed" ? "success" : contract.status === "expired" ? "warning" : "default"}>{contract.status === "signed" ? "Assinado" : contract.status === "expired" ? "Expirado" : contract.status}</Badge>
-                    <p className="text-sm text-slate-500">Criado {new Date(contract.created_at).toLocaleDateString("pt-BR")}</p>
-                    <Link
-                      href={asRoute(`/contracts/${contract.id}/edit`)}
-                      className="text-xs font-medium text-brand-600 hover:text-brand-500"
-                    >
-                      Editar
-                    </Link>
-                  </div>
-                </Card>
+                <Link key={contract.id} href={asRoute(`/contracts/${contract.id}`)}>
+                  <Card className="flex cursor-pointer flex-col gap-4 p-6 transition hover:border-brand-300 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm uppercase tracking-[0.22em] text-slate-500">Contrato</p>
+                      <h2 className="mt-1 text-lg font-semibold text-slate-950">{contract.title}</h2>
+                      <p className="mt-1 text-sm text-slate-500">
+                        Vence {contract.expires_at ? new Date(contract.expires_at).toLocaleDateString("pt-BR") : "Sem prazo"}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-start gap-2 sm:items-end">
+                      <Badge variant={contract.status === "signed" ? "success" : contract.status === "expired" ? "warning" : "default"}>
+                        {contract.status === "signed" ? "Assinado" : contract.status === "expired" ? "Expirado" : "Pendente"}
+                      </Badge>
+                      <p className="text-xs text-slate-400">Criado {new Date(contract.created_at).toLocaleDateString("pt-BR")}</p>
+                    </div>
+                  </Card>
+                </Link>
               ))
             )}
           </div>

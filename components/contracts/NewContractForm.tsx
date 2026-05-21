@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -31,16 +31,42 @@ const VARIABLES = [
   { token: "{{frequencia}}", label: "Frequência" },
 ];
 
+const VAR_RE = /(\{\{\w+\}\})/g;
+
+function substituteVars(text: string, vars: Record<string, string>): string {
+  return text.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] || `{{${key}}}`);
+}
+
+function renderFilled(text: string, vars: Record<string, string>) {
+  const resolved = substituteVars(text, vars);
+  const parts = resolved.split(VAR_RE);
+  return parts.map((part, i) =>
+    VAR_RE.test(part) ? (
+      <mark key={i} className="rounded bg-amber-100 px-1 font-medium not-italic text-amber-700">
+        {part}
+      </mark>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    )
+  );
+}
+
 const contractSchema = z.object({
   leadId: z.string().min(1, { message: "Selecione um lead." }),
   title: z.string().min(4, { message: "Informe um título para o contrato." }),
   template: z.string().min(10, { message: "Descreva o escopo e os termos do contrato." }),
-  expires_at: z.string().optional()
+  expires_at: z.string().optional(),
 });
 
 type ContractFormValues = z.infer<typeof contractSchema>;
 
-type Lead = { id: string; name: string; email: string };
+type Lead = {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  goal?: string | null;
+};
 
 const DEFAULT_TEMPLATE = `ACORDO DE SERVIÇO DE PERSONAL TRAINING
 
@@ -68,36 +94,47 @@ RESPONSABILIDADES DO CLIENTE:
 - Seguir as orientações fornecidas
 
 CANCELAMENTO:
-Sessões canceladas com menos de 24h de antecedência serão cobradas integralmente.
+Sessões canceladas com menos de 24h de antecedência serão cobradas integralmente.`;
 
-_______________________________
-Assinatura do Treinador
-
-_______________________________
-Assinatura do Cliente`;
-
-export function NewContractForm({ leads }: { leads: Lead[] }) {
+export function NewContractForm({
+  leads,
+  businessName = "",
+}: {
+  leads: Lead[];
+  businessName?: string;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors }
-  } = useForm<ContractFormValues>({
-    resolver: zodResolver(contractSchema),
-    defaultValues: {
-      leadId: leads[0]?.id ?? "",
-      title: "Contrato de Personal Training — 12 semanas",
-      template: DEFAULT_TEMPLATE,
-      expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString().slice(0, 10)
-    }
-  });
+  const { register, handleSubmit, setValue, watch, formState: { errors } } =
+    useForm<ContractFormValues>({
+      resolver: zodResolver(contractSchema),
+      defaultValues: {
+        leadId: leads[0]?.id ?? "",
+        title: "Contrato de Personal Training — 12 semanas",
+        template: DEFAULT_TEMPLATE,
+        expires_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString().slice(0, 10),
+      },
+    });
 
   const templateValue = watch("template");
+  const leadId = watch("leadId");
+  const selectedLead = leads.find((l) => l.id === leadId) ?? null;
+
+  const previewVars: Record<string, string> = {
+    nome: selectedLead?.name ?? "",
+    treinador: businessName,
+    data: new Date().toLocaleDateString("pt-BR"),
+    email: selectedLead?.email ?? "",
+    telefone: selectedLead?.phone ?? "",
+    objetivo: selectedLead?.goal ?? "",
+  };
+
+  const resolvedPreview = substituteVars(templateValue, previewVars);
+  const remainingCount = (resolvedPreview.match(/\{\{\w+\}\}/g) ?? []).length;
+  const totalVars = (templateValue.match(/\{\{\w+\}\}/g) ?? []).length;
 
   const insertVariable = (token: string) => {
     const textarea = document.getElementById("template") as HTMLTextAreaElement | null;
@@ -123,7 +160,7 @@ export function NewContractForm({ leads }: { leads: Lead[] }) {
     const promise = fetch("/api/contracts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values)
+      body: JSON.stringify(values),
     }).then(async (res) => {
       if (!res.ok) {
         const data = await res.json();
@@ -135,7 +172,7 @@ export function NewContractForm({ leads }: { leads: Lead[] }) {
     toast.promise(promise, {
       loading: "Criando contrato...",
       success: "Contrato criado com sucesso!",
-      error: (err) => err.message
+      error: (err) => err.message,
     });
 
     try {
@@ -184,7 +221,7 @@ export function NewContractForm({ leads }: { leads: Lead[] }) {
                 ))}
               </select>
             )}
-            {errors.leadId ? <p className="mt-2 text-sm text-rose-600">{errors.leadId.message}</p> : null}
+            {errors.leadId && <p className="mt-2 text-sm text-rose-600">{errors.leadId.message}</p>}
           </div>
           <div>
             <Label htmlFor="title">Título do contrato *</Label>
@@ -197,7 +234,7 @@ export function NewContractForm({ leads }: { leads: Lead[] }) {
             <datalist id="title-suggestions">
               {TITLE_SUGGESTIONS.map((t) => <option key={t} value={t} />)}
             </datalist>
-            {errors.title ? <p className="mt-2 text-sm text-rose-600">{errors.title.message}</p> : null}
+            {errors.title && <p className="mt-2 text-sm text-rose-600">{errors.title.message}</p>}
           </div>
         </div>
 
@@ -207,10 +244,9 @@ export function NewContractForm({ leads }: { leads: Lead[] }) {
         </div>
 
         <div>
+          {/* Toolbar: label + variable pills + preview toggle */}
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <Label htmlFor="template" className="mr-auto">
-              Texto do contrato *
-            </Label>
+            <Label htmlFor="template" className="mr-auto">Texto do contrato *</Label>
             {VARIABLES.map(({ token, label }) => (
               <button
                 key={token}
@@ -222,20 +258,72 @@ export function NewContractForm({ leads }: { leads: Lead[] }) {
                 {label}
               </button>
             ))}
+            {totalVars > 0 && (
+              <button
+                type="button"
+                onClick={() => setShowPreview((v) => !v)}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-0.5 text-xs font-medium transition ${
+                  showPreview
+                    ? "border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" />
+                </svg>
+                {showPreview ? "Fechar prévia" : "Preencher variáveis"}
+              </button>
+            )}
           </div>
+
           <Textarea
             id="template"
             rows={18}
             {...register("template")}
             className="font-mono text-xs leading-6"
           />
-          {errors.template ? <p className="mt-2 text-sm text-rose-600">{errors.template.message}</p> : null}
+          {errors.template && <p className="mt-2 text-sm text-rose-600">{errors.template.message}</p>}
           <p className="mt-2 text-xs text-slate-400">
             Clique nas variáveis acima para inseri-las na posição do cursor.
           </p>
+
+          {/* Preview panel */}
+          {showPreview && (
+            <div className="mt-4 overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-b from-indigo-50/60 to-white">
+              <div className="flex items-center justify-between border-b border-indigo-100 px-5 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                    Prévia — como o cliente verá
+                  </span>
+                  {selectedLead && (
+                    <span className="text-xs text-indigo-400">({selectedLead.name})</span>
+                  )}
+                </div>
+                <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${
+                  remainingCount === 0
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-amber-100 text-amber-700"
+                }`}>
+                  {remainingCount === 0
+                    ? `✓ Todas as ${totalVars} variáveis preenchidas`
+                    : `${totalVars - remainingCount} de ${totalVars} preenchidas · ${remainingCount} pendente${remainingCount > 1 ? "s" : ""}`}
+                </span>
+              </div>
+              <div className="max-h-80 overflow-y-auto p-5">
+                <pre className="whitespace-pre-wrap font-sans text-sm leading-7 text-slate-700">
+                  {renderFilled(templateValue, previewVars)}
+                </pre>
+              </div>
+              {remainingCount > 0 && (
+                <p className="border-t border-amber-100 bg-amber-50/60 px-5 py-2 text-xs text-amber-600">
+                  Variáveis em destaque precisam ser preenchidas manualmente no texto acima.
+                </p>
+              )}
+            </div>
+          )}
         </div>
 
-        {error ? <p className="text-sm text-rose-600">{error}</p> : null}
+        {error && <p className="text-sm text-rose-600">{error}</p>}
 
         <Button type="submit" disabled={loading || leads.length === 0} className="w-full">
           {loading ? "Criando contrato..." : "Criar contrato"}
